@@ -1,57 +1,295 @@
-<html>
+
+<!DOCTYPE html>
+<html lang="en" >
+
 <head>
-<title>bl33dz:~$</title>
-<style>
-html {
-	background: #000000;
-}
-pre {
-	color: lime;
-}
-a:hover, a:visited, a:link, a:active
-{
-	color: cyan;
-}
-</style>
+
+  <meta charset="UTF-8">
+  
+  <title>Bleedz!</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="style.css">
+
+
 </head>
-<body>
-<center>
-<table>
-<tr>
-<td>
-<pre>
-             ________________________________________________
-            /                                                \
-           |    _________________________________________     |
-           |   |                                         |    |
-           |   |  bl33dz:~$ cat notes.txt                |    |
-           |   |  I suck at frontend development, thx!   |    |
-           |   |                                         |    |
-           |   |  Github   : <a href="https://github.com/bl33dz">bl33dz</a>                      |    |
-           |   |  Email    : <a href="mailto:bagaz@protonmail.ch">bagaz@protonmail.ch</a>         |    |
-           |   |  HTB      : <a href="https://app.hackthebox.com/profile/67190">bl33dz</a>                      |    |
-           |   |  New Blog : <a href="https://bagaz.medium.com/">bagaz.medium.com</a>            |    |
-           |   |  Old Blog : <a href="/old/">/old/</a>                       |    |
-           |   |                                         |    |
-           |   |                                         |    |
-           |   |                                         |    |
-           |   |                                         |    |
-           |   |_________________________________________|    |
-           |                                                  |
-            \_________________________________________________/
-                   \___________________________________/
-                ___________________________________________
-             _-'    .-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.  --- `-_
-          _-'.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.--.  .-.-.`-_
-       _-'.-.-.-. .---.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-`__`. .-.-.-.`-_
-    _-'.-.-.-.-. .-----.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-----. .-.-.-.-.`-_
- _-'.-.-.-.-.-. .---.-. .-------------------------. .-.---. .---.-.-.-.`-_
-:-------------------------------------------------------------------------:
-`---._.-------------------------------------------------------------._.---'
-</pre>
-</td>
-</tr>
-</table>
-</center>
+
+
+
+<script id="rendered-js" type="module">
+  import * as PIXI from "https://cdn.skypack.dev/pixi.js@5.x";
+import { KawaseBlurFilter } from "https://cdn.skypack.dev/@pixi/filter-kawase-blur@3.2.0";
+import SimplexNoise from "https://cdn.skypack.dev/simplex-noise@3.0.0";
+import hsl from "https://cdn.skypack.dev/hsl-to-hex";
+import debounce from "https://cdn.skypack.dev/debounce";
+
+// return a random number within a range
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// map a number from 1 range to another
+function map(n, start1, end1, start2, end2) {
+  return ((n - start1) / (end1 - start1)) * (end2 - start2) + start2;
+}
+
+// Create a new simplex noise instance
+const simplex = new SimplexNoise();
+
+// ColorPalette class
+class ColorPalette {
+  constructor() {
+    this.setColors();
+    this.setCustomProperties();
+  }
+
+  setColors() {
+    // pick a random hue somewhere between 220 and 360
+    this.hue = ~~random(220, 360);
+    this.complimentaryHue1 = this.hue + 30;
+    this.complimentaryHue2 = this.hue + 60;
+    // define a fixed saturation and lightness
+    this.saturation = 95;
+    this.lightness = 50;
+
+    // define a base color
+    this.baseColor = hsl(this.hue, this.saturation, this.lightness);
+    // define a complimentary color, 30 degress away from the base
+    this.complimentaryColor1 = hsl(
+      this.complimentaryHue1,
+      this.saturation,
+      this.lightness
+    );
+    // define a second complimentary color, 60 degrees away from the base
+    this.complimentaryColor2 = hsl(
+      this.complimentaryHue2,
+      this.saturation,
+      this.lightness
+    );
+
+    // store the color choices in an array so that a random one can be picked later
+    this.colorChoices = [
+      this.baseColor,
+      this.complimentaryColor1,
+      this.complimentaryColor2
+    ];
+  }
+
+  randomColor() {
+    // pick a random color
+    return this.colorChoices[~~random(0, this.colorChoices.length)].replace(
+      "#",
+      "0x"
+    );
+  }
+
+  setCustomProperties() {
+    // set CSS custom properties so that the colors defined here can be used throughout the UI
+    document.documentElement.style.setProperty("--hue", this.hue);
+    document.documentElement.style.setProperty(
+      "--hue-complimentary1",
+      this.complimentaryHue1
+    );
+    document.documentElement.style.setProperty(
+      "--hue-complimentary2",
+      this.complimentaryHue2
+    );
+  }
+}
+
+// Orb class
+class Orb {
+  // Pixi takes hex colors as hexidecimal literals (0x rather than a string with '#')
+  constructor(fill = 0x000000) {
+    // bounds = the area an orb is "allowed" to move within
+    this.bounds = this.setBounds();
+    // initialise the orb's { x, y } values to a random point within it's bounds
+    this.x = random(this.bounds["x"].min, this.bounds["x"].max);
+    this.y = random(this.bounds["y"].min, this.bounds["y"].max);
+
+    // how large the orb is vs it's original radius (this will modulate over time)
+    this.scale = 1;
+
+    // what color is the orb?
+    this.fill = fill;
+
+    // the original radius of the orb, set relative to window height
+    this.radius = random(window.innerHeight / 6, window.innerHeight / 3);
+
+    // starting points in "time" for the noise/self similar random values
+    this.xOff = random(0, 1000);
+    this.yOff = random(0, 1000);
+    // how quickly the noise/self similar random values step through time
+    this.inc = 0.002;
+
+    // PIXI.Graphics is used to draw 2d primitives (in this case a circle) to the canvas
+    this.graphics = new PIXI.Graphics();
+    this.graphics.alpha = 0.825;
+
+    // 250ms after the last window resize event, recalculate orb positions.
+    window.addEventListener(
+      "resize",
+      debounce(() => {
+        this.bounds = this.setBounds();
+      }, 250)
+    );
+  }
+
+  setBounds() {
+    // how far from the { x, y } origin can each orb move
+    const maxDist =
+      window.innerWidth < 1000 ? window.innerWidth / 3 : window.innerWidth / 5;
+    // the { x, y } origin for each orb (the bottom right of the screen)
+    const originX = window.innerWidth / 1.25;
+    const originY =
+      window.innerWidth < 1000
+        ? window.innerHeight
+        : window.innerHeight / 1.375;
+
+    // allow each orb to move x distance away from it's x / y origin
+    return {
+      x: {
+        min: originX - maxDist,
+        max: originX + maxDist
+      },
+      y: {
+        min: originY - maxDist,
+        max: originY + maxDist
+      }
+    };
+  }
+
+  update() {
+    // self similar "psuedo-random" or noise values at a given point in "time"
+    const xNoise = simplex.noise2D(this.xOff, this.xOff);
+    const yNoise = simplex.noise2D(this.yOff, this.yOff);
+    const scaleNoise = simplex.noise2D(this.xOff, this.yOff);
+
+    // map the xNoise/yNoise values (between -1 and 1) to a point within the orb's bounds
+    this.x = map(xNoise, -1, 1, this.bounds["x"].min, this.bounds["x"].max);
+    this.y = map(yNoise, -1, 1, this.bounds["y"].min, this.bounds["y"].max);
+    // map scaleNoise (between -1 and 1) to a scale value somewhere between half of the orb's original size, and 100% of it's original size
+    this.scale = map(scaleNoise, -1, 1, 0.5, 1);
+
+    // step through "time"
+    this.xOff += this.inc;
+    this.yOff += this.inc;
+  }
+
+  render() {
+    // update the PIXI.Graphics position and scale values
+    this.graphics.x = this.x;
+    this.graphics.y = this.y;
+    this.graphics.scale.set(this.scale);
+
+    // clear anything currently drawn to graphics
+    this.graphics.clear();
+
+    // tell graphics to fill any shapes drawn after this with the orb's fill color
+    this.graphics.beginFill(this.fill);
+    // draw a circle at { 0, 0 } with it's size set by this.radius
+    this.graphics.drawCircle(0, 0, this.radius);
+    // let graphics know we won't be filling in any more shapes
+    this.graphics.endFill();
+  }
+}
+
+// Create PixiJS app
+const app = new PIXI.Application({
+  // render to <canvas class="orb-canvas"></canvas>
+  view: document.querySelector(".orb-canvas"),
+  // auto adjust size to fit the current window
+  resizeTo: window,
+  // transparent background, we will be creating a gradient background later using CSS
+  transparent: true
+});
+
+app.stage.filters = [new KawaseBlurFilter(30, 10, true)];
+
+// Create colour palette
+const colorPalette = new ColorPalette();
+
+// Create orbs
+const orbs = [];
+
+for (let i = 0; i < 10; i++) {
+  const orb = new Orb(colorPalette.randomColor());
+
+  app.stage.addChild(orb.graphics);
+
+  orbs.push(orb);
+}
+
+// Animate!
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  app.ticker.add(() => {
+    orbs.forEach((orb) => {
+      orb.update();
+      orb.render();
+    });
+  });
+} else {
+  orbs.forEach((orb) => {
+    orb.update();
+    orb.render();
+  });
+}
+
+document
+  .querySelector(".change-colors")
+  .addEventListener("click", () => {
+    colorPalette.setColors();
+    colorPalette.setCustomProperties();
+
+    orbs.forEach((orb) => {
+      orb.fill = colorPalette.randomColor();
+    });
+  });
+</script>
+
+<body translate="no" id="loading">
+<canvas class="orb-canvas"></canvas>
+<!-- Overlay -->
+<div class="overlay disable-select">
+  <!-- Overlay inner wrapper -->
+  <div class="overlay__inner">
+    <img src="https://i.pinimg.com/736x/8c/d8/20/8cd8205810b9ab38534ff8248897018f.jpg" width="250px" height="250px">
+    <br><br>
+    <!-- Title -->
+    <h1 class="overlay__title">
+      Hi, my name is
+      <span class="text-gradient change-colors">Bleedz</span>!
+    </h1>
+    <!-- Description -->
+    <p class="overlay__description">
+      I am a university student. I am interested in programming and CTF. My main programming languages are Python and PHP, but I also like to learn other programming languages like C++ and Go.
+    </p>
+    <!-- Buttons -->
+    <a href="https://github.com/bl33dz" target="_blank"><i class="fa-brands fa-github fa-2x clickable"></i></a>&nbsp;&nbsp;
+    <a href="https://discordapp.com/users/522395554324545539" target="_blank"><i class="fa-brands fa-discord fa-2x clickable"></i></a>&nbsp;&nbsp;
+    <a href="https://open.spotify.com/user/213kupgwtxtvsellortjr2qta" target="_blank"><i class="fa-brands fa-spotify fa-2x clickable"></i></a>&nbsp;&nbsp;
+  </div>
+</div>
+
+<script>
+  function unblur(b) {
+    document.getElementById("loading").style.filter = "blur("+ b + "px)";
+  }
+  var b = 50;
+  (function myLoop(i) {
+  setTimeout(function() {
+    unblur(b);
+    b = b - 10; //  your code here                
+    if (--i) myLoop(i);   //  decrement i and call myLoop again if i > 0
+  }, 100)
+  })(10);
+  // unblur();
+</script>
+
 </body>
-</html>
+
+</html> 
